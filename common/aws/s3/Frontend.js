@@ -1,9 +1,9 @@
-import { aws as config } from "common/config";
+const { aws: config } = require("../../config");
 
-const KEY_CLADES = 'clades';
-const KEY_TEMP = 'temp';
+const KEY_CLADES = "clades";
+const KEY_TEMP = "temp";
 
-export default class Frontend {
+module.exports = class Frontend {
   static getBucketName() {
     return config.bucket;
   }
@@ -19,4 +19,4 @@ export default class Frontend {
   static getCladeUrl(cladeId, assetId) {
     return `${this.getBucketUrl()}/${KEY_CLADES}/${cladeId}/${assetId}`;
   }
-}
+};

@@ -2,8 +2,7 @@
  * Module dependencies
  */
 
-import cladeRouter from './clade';
-
-export default (app) => {
-  app.use('/', cladeRouter);
+const cladeRouter = require("./clade");
+module.exports = app => {
+  app.use("/", cladeRouter);
 };

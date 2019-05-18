@@ -1,6 +1,10 @@
-import Admin from './databases/admin';
-import Public from './databases/public';
+const { S3, SES } = require("./aws");
 
-export const Database = { Admin, Public };
-export { S3 } from './aws';
-export { SES } from './aws';
+module.exports = {
+  Database: {
+    Admin: require("./databases/admin"),
+    Public: require("./databases/public")
+  },
+  S3,
+  SES
+};

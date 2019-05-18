@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
-import { Transaction } from "common/databases/admin";
-import CTP from './CladeTransactionProcessor';
+const mongoose = require("mongoose");
+const { Transaction } = require("@explorer/common/databases/admin");
+const CTP = require("./CladeTransactionProcessor");
 
 const TIMEOUT = 1000;
 
-class Processor {
+module.exports = class Processor {
   constructor() {
     this.start = this.start.bind(this);
     this.doQuery = this.doQuery.bind(this);
@@ -15,17 +15,15 @@ class Processor {
   }
 
   start() {
-    console.log('STARTED');
+    console.log("STARTED");
     this.doQuery();
   }
 
   doQuery() {
-    Transaction
-      .find({type: 'CLADE', status: {$in: ['PENDING']}})
+    Transaction.find({ type: "CLADE", status: { $in: ["PENDING"] } })
       .then(this.processTransactions)
       .catch(this.handleError)
-      .finally(this.loop)
-    ;
+      .finally(this.loop);
   }
 
   loop() {
@@ -41,30 +39,33 @@ class Processor {
 
     const cycle = new mongoose.Types.ObjectId();
     console.log(`Found ${transactions.length} transactions. Cycle: ${cycle}`);
-    return Promise.all(transactions.map((transaction, i) => this.process(transaction, i, cycle)));
+    return Promise.all(
+      transactions.map((transaction, i) => this.process(transaction, i, cycle))
+    );
   }
 
   process(transaction, i, cycle) {
     transaction.cycle = cycle;
-    console.log(`${i + 1} - Processing transaction Id: ${transaction._id}, Mode: ${transaction.mode}`);
+    console.log(
+      `${i + 1} - Processing transaction Id: ${transaction._id}, Mode: ${
+        transaction.mode
+      }`
+    );
 
     const ctp = new CTP(transaction);
 
     switch (transaction.mode) {
-      case 'UPDATE':
+      case "UPDATE":
         return ctp.updateClade();
 
-      case 'CREATE':
+      case "CREATE":
         return ctp.createClade();
 
-      case 'DESTROY':
+      case "DESTROY":
         return ctp.destroyClade();
 
       default:
-        throw new Error('Unknown transaction mode: ' + transaction.mode);
+        throw new Error("Unknown transaction mode: " + transaction.mode);
     }
   }
-}
-
-
-export default Processor;
+};

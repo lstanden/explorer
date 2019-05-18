@@ -1,8 +1,8 @@
-import { Controller } from '../modules';
-import { Setting } from 'common/databases/admin';
-import AccessControl from '../middleware/AccessControl';
+const { Controller } = require("../modules");
+const { Setting } = require("@explorer/common/databases/admin");
+const AccessControl = require("../middleware/AccessControl");
 
-class SettingController extends Controller {
+module.exports = class SettingController extends Controller {
   constructor() {
     super(AccessControl);
   }
@@ -24,8 +24,10 @@ class SettingController extends Controller {
       setting.allowUserRegistration = req.body.allowUserRegistration;
       setting.allowUserConfirmation = req.body.allowUserConfirmation;
       setting.allowUserInvitation = req.body.allowUserInvitation;
-      setting.logoutUserAfterMinutesOfInactivity = req.body.logoutUserAfterMinutesOfInactivity;
-      setting.deactivateUserAfterDaysOfInactivity = req.body.deactivateUserAfterDaysOfInactivity;
+      setting.logoutUserAfterMinutesOfInactivity =
+        req.body.logoutUserAfterMinutesOfInactivity;
+      setting.deactivateUserAfterDaysOfInactivity =
+        req.body.deactivateUserAfterDaysOfInactivity;
       setting.save(err2 => this.handleResponse(res, next, err2, setting));
     });
   }
@@ -47,6 +49,4 @@ class SettingController extends Controller {
       this.handleResponse(res, next, err, setting);
     });
   }
-}
-
-export default SettingController;
+};

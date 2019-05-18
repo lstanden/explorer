@@ -1,13 +1,15 @@
-import express from 'express';
-import path from 'path';
-// import favicon from 'serve-favicon';
-import logger from 'morgan';
-import cookieParser from 'cookie-parser';
-import bodyParser from 'body-parser';
-import routes from './routes/index';
-import { Server } from './modules';
+const express = require('express');
+const path = require('path');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const routes = require('./routes');
+const { Server } = require('./modules');
+const helmet = require('helmet');
+require('dotenv').config();
 
 const app = express();
+app.use(helmet());
 
 // view engine setup
 // app.set('views', path.join(__dirname, 'views'));
@@ -84,8 +86,6 @@ app.set('json spaces', 2);
 
 
 // Produce and spin up the server
-const factory = new Server(app, 5500, 'phylex-public-api:server');
+const factory = new Server(app, process.env.PORT, 'phylex-public-api:server');
 
 factory.createAndStartServer();
-
-export default app;

@@ -1,4 +1,4 @@
-export default function AccessControl() {
+module.exports = function AccessControl() {
   return (req, res, next, eventName) => {
     //TODO handle access control
     // console.error({
@@ -8,4 +8,4 @@ export default function AccessControl() {
     //   action: eventName,
     // });
   };
-}
+};

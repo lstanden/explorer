@@ -1,4 +1,4 @@
-export default class Controller {
+module.exports = class Controller {
   /**
    * Constructor
    * @param middlewareFn [ ] an array of methods to be called
@@ -7,7 +7,7 @@ export default class Controller {
    * methods to ignore when calling the middleware
    */
   constructor(middlewareFn, ignoreFns) {
-    this._name = this.constructor.name || 'Controller';
+    this._name = this.constructor.name || "Controller";
     this._middleware = middlewareFn || [];
     this._ignoreFns = ignoreFns || [];
     if (middlewareFn) {
@@ -33,9 +33,15 @@ export default class Controller {
   }
 
   _wrapMethods() {
-    for (const name of Object.getOwnPropertyNames(Object.getPrototypeOf(this))) {
+    for (const name of Object.getOwnPropertyNames(
+      Object.getPrototypeOf(this)
+    )) {
       const method = this[name];
-      if (method instanceof Function && name !== 'constructor' && this._ignoreFns.indexOf(name) === -1) {
+      if (
+        method instanceof Function &&
+        name !== "constructor" &&
+        this._ignoreFns.indexOf(name) === -1
+      ) {
         this[name] = this._wrap(method, name);
         this[name] = Controller.renameFunction(name, this[name]);
       }
@@ -54,7 +60,10 @@ export default class Controller {
   }
 
   static renameFunction(name, fn) {
-    return new Function('action', `return function ${name}(...args){ action(...args) };`)(fn);
+    return new Function(
+      "action",
+      `return function ${name}(...args){ action(...args) };`
+    )(fn);
   }
 
   get middleware() {

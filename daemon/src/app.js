@@ -1,8 +1,5 @@
-import mongoose from 'mongoose';
-import Processor from './components/Processor';
-
-global.Promise = require('bluebird');
-mongoose.Promise = global.Promise;
+const mongoose = require("mongoose");
+const Processor = require("./components/Processor");
 
 const p = new Processor();
 p.start();

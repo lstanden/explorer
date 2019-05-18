@@ -2,21 +2,14 @@
  * Module dependencies
  */
 
-import userRouter from './users';
-import roleRouter from './roles';
-import ruleRouter from './rules';
-import authRouter from './auth';
-import settingsRouter from './settings';
-import transactionsRouter from './transactions';
-import assetsRouter from './assets';
-import authCheckMiddleware from '../middleware/AuthCheck';
+const authCheckMiddleware = require("../middleware/AuthCheck");
 
-export default (app) => {
-  app.use('/', authRouter);
-  app.use('/', authCheckMiddleware, userRouter);
-  app.use('/', authCheckMiddleware, roleRouter);
-  app.use('/', authCheckMiddleware, ruleRouter);
-  app.use('/', authCheckMiddleware, settingsRouter);
-  app.use('/', authCheckMiddleware, transactionsRouter);
-  app.use('/', authCheckMiddleware, assetsRouter);
+module.exports = app => {
+  app.use("/", require("./auth"));
+  app.use("/", authCheckMiddleware, require("./users"));
+  app.use("/", authCheckMiddleware, require("./roles"));
+  app.use("/", authCheckMiddleware, require("./rules"));
+  app.use("/", authCheckMiddleware, require("./settings"));
+  app.use("/", authCheckMiddleware, require("./transactions"));
+  app.use("/", authCheckMiddleware, require("./assets"));
 };

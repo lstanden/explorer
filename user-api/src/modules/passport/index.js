@@ -1,9 +1,7 @@
-import passport from 'passport';
-import localSignupStrategy from './signup';
-import localLoginStrategy from './login';
+const passport = require("passport");
 
-export default (app) => {
+module.exports = app => {
   app.use(passport.initialize());
-  passport.use('local-signup', localSignupStrategy);
-  passport.use('local-login', localLoginStrategy);
-}
+  passport.use("local-signup", require("./signup"));
+  passport.use("local-login", require("./login"));
+};

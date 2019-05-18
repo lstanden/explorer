@@ -1,1 +1,1 @@
-export { default as Router } from './router';
+module.exports = require("./router");

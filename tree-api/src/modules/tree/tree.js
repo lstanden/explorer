@@ -1,5 +1,4 @@
-class Tree {
-
+module.exports = class Tree {
   constructor(schema, root, depth, callback) {
     this._depth = depth;
     this._actualDepth = depth;
@@ -38,21 +37,26 @@ class Tree {
 
   traverse(level, nodeIds, callback) {
     if (nodeIds.length > 1000) {
-      console.warn('Warning: your are exceeding the safe id count');
+      console.warn("Warning: your are exceeding the safe id count");
     }
-    this._schema.find({ parent: { $in: nodeIds } }, null, { sort: 'name' }, (err2, children) => {
-      for (let i = 0; i < children.length; i += 1) {
-        const child = children[i].toObject();
-        child.children = [];
-        this.attributeToParent(child, level);
+    this._schema.find(
+      { parent: { $in: nodeIds } },
+      null,
+      { sort: "name" },
+      (err2, children) => {
+        for (let i = 0; i < children.length; i += 1) {
+          const child = children[i].toObject();
+          child.children = [];
+          this.attributeToParent(child, level);
+        }
+        callback(level + 1);
       }
-      callback(level + 1);
-    });
+    );
   }
 
   walk(level) {
     if (level < this._depth - 1 && this._nodeIds[level].length > 0) {
-      this.traverse(level, this._nodeIds[level], (e => this.walk(e)));
+      this.traverse(level, this._nodeIds[level], e => this.walk(e));
     } else {
       if (this._nodeIds[level].length === 0) {
         this._actualDepth = level;
@@ -76,13 +80,13 @@ class Tree {
       total: this._total,
       depth: this._depth,
       actualDepth: this._actualDepth,
-      root: this._root,
+      root: this._root
     };
     this._callback(result);
   }
 
   print() {
-    let str = '';
+    let str = "";
     for (let i = 0; i < this._depth; i += 1) {
       str += `Level: ${i + 1}, Count: ${this._nodeIds[i].length} \n`;
       for (const [key, value] of Object.entries(this._nodes[i])) {
@@ -92,7 +96,4 @@ class Tree {
     }
     console.error(str);
   }
-
-}
-
-export default Tree;
+};

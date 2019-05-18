@@ -1,9 +1,9 @@
-import mongoose from 'mongoose';
-import bcrypt from "bcrypt";
-import connection from '../connection';
+const mongoose = require("mongoose");
+const connection = require("../connection");
+const bcrypt = require("bcrypt");
 
 const UserSchema = new mongoose.Schema({
-  role: { type: mongoose.Schema.ObjectId, ref: 'Role' },
+  role: { type: mongoose.Schema.ObjectId, ref: "Role" },
   title: { type: String },
   firstName: { type: String },
   lastName: { type: String },
@@ -23,7 +23,7 @@ const UserSchema = new mongoose.Schema({
   isConfirmed: { type: Boolean, default: false },
   created: { type: Date, default: Date.now },
   modified: { type: Date },
-  referenceCode: { type: String },
+  referenceCode: { type: String }
 });
 
 /**
@@ -32,19 +32,21 @@ const UserSchema = new mongoose.Schema({
  * @param {string} password
  * @returns {object} callback
  */
-UserSchema.methods.comparePassword = function comparePassword(password, callback) {
+UserSchema.methods.comparePassword = function comparePassword(
+  password,
+  callback
+) {
   bcrypt.compare(password, this.password, callback);
 };
 
 /**
  * The pre-save hook method.
  */
-UserSchema.pre('save', function saveHook(next) {
+UserSchema.pre("save", function saveHook(next) {
   const user = this;
 
   // proceed further only if the password is modified or the user is new
-  if (!user.isModified('password')) return next();
-
+  if (!user.isModified("password")) return next();
 
   return bcrypt.genSalt((saltError, salt) => {
     if (saltError) {
@@ -64,4 +66,4 @@ UserSchema.pre('save', function saveHook(next) {
   });
 });
 
-export default connection.model('User', UserSchema);
+module.exports = connection.model("User", UserSchema);

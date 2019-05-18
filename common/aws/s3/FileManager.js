@@ -1,16 +1,15 @@
-import AWS from 'aws-sdk';
-import { aws as config } from '../../config';
-import { Promise } from 'bluebird';
+const AWS = require("aws-sdk");
+const { aws: config } = require("../../config");
 
 AWS.config.update({
   region: config.region,
   credentials: new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: config.identityPoolId,
-  }),
+    IdentityPoolId: config.identityPoolId
+  })
 });
 
-const KEY_CLADES = 'clades';
-const KEY_TEMP = 'temp';
+const KEY_CLADES = "clades";
+const KEY_TEMP = "temp";
 
 class FileManager {
   constructor() {
@@ -21,10 +20,10 @@ class FileManager {
     if (this._s3) return this._s3;
 
     this._s3 = new AWS.S3({
-      apiVersion: '2006-03-01',
+      apiVersion: "2006-03-01",
       params: { Bucket: config.bucket },
       accessKeyId: config.accessKeyId,
-      secretAccessKey: config.secretAccessKey,
+      secretAccessKey: config.secretAccessKey
     });
 
     return this._s3;
@@ -55,15 +54,21 @@ class FileManager {
   }
 
   uploadTempImage(assetId, blob) {
-    return this.getS3().putObject({ Key: this.getTempKey(assetId), Body: blob }).promise();
+    return this.getS3()
+      .putObject({ Key: this.getTempKey(assetId), Body: blob })
+      .promise();
   }
 
   destroyTempImage(assetId) {
-    return this.getS3().deleteObject({ Key: this.getTempKey(assetId) }).promise();
+    return this.getS3()
+      .deleteObject({ Key: this.getTempKey(assetId) })
+      .promise();
   }
 
   destroyCladeImage(cladeId, assetId) {
-    return this.getS3().deleteObject({ Key: this.getCladeKey(cladeId, assetId) }).promise();
+    return this.getS3()
+      .deleteObject({ Key: this.getCladeKey(cladeId, assetId) })
+      .promise();
   }
 
   moveTempImageToCladeFolder(assetId, cladeId) {
@@ -72,9 +77,11 @@ class FileManager {
       CopySource: `${this.getBucketName()}/${this.getTempKey(assetId)}`
     };
 
-    return this.getS3().copyObject(params).promise()
+    return this.getS3()
+      .copyObject(params)
+      .promise()
       .then(() => this.destroyTempImage(assetId));
   }
 }
 
-export default FileManager;
+module.exports = FileManager;

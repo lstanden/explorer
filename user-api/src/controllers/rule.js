@@ -1,9 +1,8 @@
-import { Controller } from '../modules';
-import AccessControl from '../middleware/AccessControl';
-import { Rule } from 'common/databases/admin';
+const { Controller } = require("../modules");
+const AccessControl = require("../middleware/AccessControl");
+const { Rule } = require("@explorer/common/databases/admin");
 
-class RuleController extends Controller {
-
+module.exports = class RuleController extends Controller {
   constructor() {
     super(AccessControl);
   }
@@ -39,14 +38,12 @@ class RuleController extends Controller {
     //   this.handleResponse(res, next, null, 'done');
     // });
 
-    this.handleResponse(res, next, null, 'nothing happened');
+    this.handleResponse(res, next, null, "nothing happened");
   }
 
   getRules(req, res, next) {
-    Rule.find({}, 'path method controller action -_id', (err, rules) => {
+    Rule.find({}, "path method controller action -_id", (err, rules) => {
       this.handleResponse(res, next, err, rules);
     });
   }
-}
-
-export default RuleController;
+};

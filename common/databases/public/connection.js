@@ -1,7 +1,7 @@
-import { database as config } from '../../config';
-import dbFactory from '../factory';
+const { database: config } = require("../../config");
+const dbFactory = require("../factory");
 
-export default dbFactory(
+module.exports = dbFactory(
   config.public.user,
   config.public.password,
   config.hosts,

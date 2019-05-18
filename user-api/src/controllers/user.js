@@ -1,20 +1,23 @@
-import { User } from 'common/databases/admin';
-import { Controller } from '../modules';
-import AccessControl from '../middleware/AccessControl';
+const { User } = require("@explorer/common/databases/admin");
+const { Controller } = require("../modules");
+const AccessControl = require("../middleware/AccessControl");
 
-class UserController extends Controller {
+module.exports = class UserController extends Controller {
   constructor() {
     super(AccessControl);
   }
 
   getUsers(req, res, next) {
-    User.find({}, (err, users) => this.handleResponse(res, next, err, users)).populate('role', 'description');
+    User.find({}, (err, users) =>
+      this.handleResponse(res, next, err, users)
+    ).populate("role", "description");
   }
 
   getUser(req, res, next) {
     const userId = req.params.userId;
-    User.findOne({ _id: userId }, (err, user) => this.handleResponse(res, next, err, user))
-      .populate('role', 'description');
+    User.findOne({ _id: userId }, (err, user) =>
+      this.handleResponse(res, next, err, user)
+    ).populate("role", "description");
   }
 
   createUser(req, res, next) {
@@ -61,7 +64,9 @@ class UserController extends Controller {
       updatedUser.subscribed = req.body.subscribed;
       updatedUser.coverLetter = req.body.coverLetter;
       updatedUser.modified = Date.now();
-      updatedUser.save(err2 => this.handleResponse(res, next, err2, updatedUser));
+      updatedUser.save(err2 =>
+        this.handleResponse(res, next, err2, updatedUser)
+      );
       return undefined;
     });
   }
@@ -137,5 +142,4 @@ class UserController extends Controller {
       return undefined;
     });
   }
-}
-export default UserController;
+};

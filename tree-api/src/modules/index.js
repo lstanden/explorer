@@ -1,4 +1,6 @@
-export { Controller } from './controller';
-export { Router } from './router';
-export { Server } from './server';
-export { Tree } from './tree';
+module.exports = {
+  Controller: require("./controller"),
+  Router: require("./router"),
+  Server: require("./server"),
+  Tree: require("./tree")
+};

@@ -1,6 +1,6 @@
-import express from 'express';
+const express = require("express");
 
-class Router extends express.Router {
+module.exports = class Router extends express.Router {
   constructor(controller) {
     super();
     this._controller = controller.name;
@@ -13,6 +13,4 @@ class Router extends express.Router {
   set controller(controller) {
     this._controller = controller;
   }
-}
-
-export default Router;
+};

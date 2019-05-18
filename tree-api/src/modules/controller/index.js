@@ -1,1 +1,1 @@
-export { default as Controller } from './controller';
+module.exports = require("./controller");

@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import connection from '../connection';
+const mongoose = require('mongoose');
+const connection = require('../connection');
 
 const RuleSchema = new mongoose.Schema({
   path: {type: String},
@@ -10,4 +10,4 @@ const RuleSchema = new mongoose.Schema({
   modified: {type: Date},
 });
 
-export default connection.model('Rule', RuleSchema);
+module.exports = connection.model('Rule', RuleSchema);

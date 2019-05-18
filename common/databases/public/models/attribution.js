@@ -1,6 +1,6 @@
-import mongoose from 'mongoose';
-import connection from '../connection';
-import { AttributionType, SensuLabel } from '../constants';
+const mongoose = require("mongoose");
+const connection = require("../connection");
+const { AttributionType, SensuLabel } = require("../constants");
 
 // The date is a string because it can be formatted in a variety of ways such as 1995, '95, January 1995, 01/95, etc.
 const AttributionSchema = new mongoose.Schema({
@@ -8,34 +8,34 @@ const AttributionSchema = new mongoose.Schema({
     type: String,
     enum: Object.keys(AttributionType),
     default: AttributionType.Original,
-    required: [true, 'Missing attribution type'],
+    required: [true, "Missing attribution type"]
   },
   name: {
     type: String,
-    required: [true, 'Missing attribution author name'],
+    required: [true, "Missing attribution author name"]
   },
   date: {
     type: String,
-    required: [true, 'Missing attribution date'],
+    required: [true, "Missing attribution date"]
   },
   isImplied: {
     type: Boolean,
     default: false,
-    required: false,
+    required: false
   },
   sensuClade: {
     type: String,
-    required: false,
+    required: false
   },
   sensuLabel: {
     type: String,
     enum: Object.keys(SensuLabel),
-    required: false,
+    required: false
   },
   emendedOldName: {
     type: String,
-    required: false,
-  },
+    required: false
+  }
 });
 
 AttributionSchema.methods.copyFrom = function(toCopy) {
@@ -44,7 +44,7 @@ AttributionSchema.methods.copyFrom = function(toCopy) {
   this.date = toCopy.date;
   this.isImplied = toCopy.isImplied;
   this.sensuClade = toCopy.sensuClade;
-  if(toCopy.sensuLabel) {
+  if (toCopy.sensuLabel) {
     this.sensuLabel = toCopy.sensuLabel;
   }
   this.emendedOldName = toCopy.emendedOldName;
@@ -52,7 +52,7 @@ AttributionSchema.methods.copyFrom = function(toCopy) {
 
 Object.assign(AttributionSchema.statics, {
   AttributionType,
-  SensuLabel,
+  SensuLabel
 });
 
-export default connection.model('Attribution', AttributionSchema);
+module.exports = connection.model("Attribution", AttributionSchema);

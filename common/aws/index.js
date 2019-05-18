@@ -1,5 +1,7 @@
-import FileManager from './s3/FileManager';
-import EmailManager from './ses/EmailManager';
+const FileManager = require("./s3/FileManager");
+const EmailManager = require("./ses/EmailManager");
 
-export const S3 = new FileManager();
-export const SES = new EmailManager();
+module.exports = {
+  S3: new FileManager(),
+  SES: new EmailManager()
+};

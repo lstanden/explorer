@@ -1,12 +1,12 @@
-import jwt from 'jsonwebtoken';
-import { User } from 'common/databases/admin';
-import { auth } from 'common/config';
+const jwt = require("jsonwebtoken");
+const { User } = require("@explorer/common/databases/admin");
+const { auth } = require("@explorer/common/config");
 
 /**
  *  The Auth Checker middleware function.
  */
 const AuthCheck = (req, res, next) => {
-  if (req.method === 'OPTIONS') {
+  if (req.method === "OPTIONS") {
     next();
   }
   if (!req.headers.authorization) {
@@ -14,7 +14,7 @@ const AuthCheck = (req, res, next) => {
   }
 
   // get the last part from a authorization header string like "bearer token-value"
-  const token = req.headers.authorization.split(' ')[1];
+  const token = req.headers.authorization.split(" ")[1];
 
   // decode the token using a secret key-phrase
   return jwt.verify(token, auth.jwt.secret, (err, decoded) => {
@@ -32,8 +32,8 @@ const AuthCheck = (req, res, next) => {
       }
       req.user = user;
       return next();
-    }).populate('role');
+    }).populate("role");
   });
 };
 
-export default AuthCheck;
+module.exports = AuthCheck;

@@ -1,7 +1,7 @@
-import { database as config} from '../../config';
-import dbFactory from '../factory';
+const { database: config } = require("../../config");
+const dbFactory = require("../factory");
 
-const Connection = dbFactory(
+module.exports = dbFactory(
   config.admin.user,
   config.admin.password,
   config.hosts,
@@ -10,5 +10,3 @@ const Connection = dbFactory(
   config.replica_set,
   config.auth_source
 );
-
-export default Connection;

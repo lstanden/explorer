@@ -1,1 +1,1 @@
-export { default as Server } from './WebServerFactory';
+module.exports = require("./WebServerFactory");

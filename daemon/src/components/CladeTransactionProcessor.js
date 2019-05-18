@@ -1,7 +1,7 @@
-import { Clade } from 'common/databases/public';
-import { S3 } from 'common/aws';
+const { Clade } = require("@explorer/common/databases/public");
+const { S3 } = require("@explorer/common/aws");
 
-export default class CladeTransactionProcessor {
+module.exports = class CladeTransactionProcessor {
   constructor(transaction) {
     this._transaction = transaction;
     this._completeTransaction = this._completeTransaction.bind(this);
@@ -15,8 +15,7 @@ export default class CladeTransactionProcessor {
     return this._saveDataToClade(new Clade())
       .then(this._registerAssets)
       .then(this._completeTransaction)
-      .catch(this._failTransaction)
-    ;
+      .catch(this._failTransaction);
   }
 
   updateClade() {
@@ -24,20 +23,21 @@ export default class CladeTransactionProcessor {
       .then(this._saveDataToClade)
       .then(this._registerAssets)
       .then(this._completeTransaction)
-      .catch(this._failTransaction)
-    ;
+      .catch(this._failTransaction);
   }
 
   destroyClade() {
     return Clade.findByIdAndRemove(this._transaction.identifier)
       .then(this._deleteAssets)
       .then(this._completeTransaction)
-      .catch(this._failTransaction)
-    ;
+      .catch(this._failTransaction);
   }
 
   _saveDataToClade(clade) {
-    if (!clade) throw new Error('Clade with id ' + this._transaction.identifier + ' not found.');
+    if (!clade)
+      throw new Error(
+        "Clade with id " + this._transaction.identifier + " not found."
+      );
     clade.parent = this._transaction.data.after.parent;
     clade.name = this._transaction.data.after.name;
     clade.description = this._transaction.data.after.description;
@@ -49,29 +49,36 @@ export default class CladeTransactionProcessor {
   }
 
   _deleteAssets(clade) {
-    return Promise.all(this._transaction.assets.before.map(asset => {
-      return S3.destroyCladeImage(clade._id, asset.name);
-    }));
+    return Promise.all(
+      this._transaction.assets.before.map(asset => {
+        return S3.destroyCladeImage(clade._id, asset.name);
+      })
+    );
   }
 
   _registerAssets(clade) {
-    return Promise.all(this._transaction.assets.after.map(asset => {
-      if (asset.folder === 'temp') return S3.moveTempImageToCladeFolder(asset.name, clade._id);
-      return null;
-    }));
+    return Promise.all(
+      this._transaction.assets.after.map(asset => {
+        if (asset.folder === "temp")
+          return S3.moveTempImageToCladeFolder(asset.name, clade._id);
+        return null;
+      })
+    );
   }
 
   _completeTransaction(clade) {
-    this._transaction.status = 'DONE';
-    this._transaction.identifier = clade ? clade._id : this._transaction.identifier;
+    this._transaction.status = "DONE";
+    this._transaction.identifier = clade
+      ? clade._id
+      : this._transaction.identifier;
     return this._transaction.save();
   }
 
   _failTransaction(err) {
-    this._transaction.status = 'FAILED';
+    this._transaction.status = "FAILED";
     this._transaction.error = err;
     return this._transaction.save().then(() => {
       throw new Error(err);
     });
   }
-}
+};

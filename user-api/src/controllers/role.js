@@ -1,16 +1,16 @@
-import { Controller } from '../modules';
-import { Role } from 'common/databases/admin';
-import AccessControl from '../middleware/AccessControl';
+const { Controller } = require("../modules");
+const { Role } = require("@explorer/common/databases/admin");
+const AccessControl = require("../middleware/AccessControl");
 
-class RoleController extends Controller {
-
+module.exports = class RoleController extends Controller {
   constructor() {
     super(AccessControl);
   }
 
   getActiveRoles(req, res, next) {
-    Role.find({ isActive: true }, 'description isDefault',
-      (err, roles) => this.handleResponse(res, next, err, roles));
+    Role.find({ isActive: true }, "description isDefault", (err, roles) =>
+      this.handleResponse(res, next, err, roles)
+    );
   }
 
   getRoles(req, res, next) {
@@ -19,7 +19,9 @@ class RoleController extends Controller {
 
   getRole(req, res, next) {
     const roleId = req.params.roleId;
-    Role.findOne({ _id: roleId }, (err, role) => this.handleResponse(res, next, err, role));
+    Role.findOne({ _id: roleId }, (err, role) =>
+      this.handleResponse(res, next, err, role)
+    );
   }
 
   createRole(req, res, next) {
@@ -43,7 +45,9 @@ class RoleController extends Controller {
       updatedRole.isActive = req.body.isActive;
       updatedRole.modified = Date.now();
       updatedRole.rules = req.body.rules;
-      updatedRole.save(err2 => this.handleResponse(res, next, err2, updatedRole));
+      updatedRole.save(err2 =>
+        this.handleResponse(res, next, err2, updatedRole)
+      );
       return undefined;
     });
   }
@@ -62,7 +66,7 @@ class RoleController extends Controller {
         return next(err);
       }
       Role.find({}, (err2, roles) => {
-        roles.forEach((role) => {
+        roles.forEach(role => {
           const updatedRole = role;
           updatedRole.isDefault = foundRole._id.equals(role._id);
           updatedRole.save();
@@ -72,6 +76,4 @@ class RoleController extends Controller {
       return undefined;
     });
   }
-}
-
-export default RoleController;
+};

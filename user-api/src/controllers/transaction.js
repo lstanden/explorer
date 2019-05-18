@@ -1,33 +1,35 @@
-import { Controller } from '../modules';
-import { Transaction } from 'common/databases/admin';
-import AccessControl from '../middleware/AccessControl';
+const { Controller } = require("../modules");
+const { Transaction } = require("@explorer/common/databases/admin");
+const AccessControl = require("../middleware/AccessControl");
 
-import Promise from 'bluebird';
-
-class TransactionController extends Controller {
-
+module.exports = class TransactionController extends Controller {
   constructor() {
     super(AccessControl);
   }
 
   getCladeTransactions(req, res, next) {
-    if (req.user.role.description === 'admin') {
-      Transaction.find({ type: 'CLADE' }, (err, trs) => this.handleResponse(res, next, err, trs))
+    if (req.user.role.description === "admin") {
+      Transaction.find({ type: "CLADE" }, (err, trs) =>
+        this.handleResponse(res, next, err, trs)
+      )
         .sort({ created: -1 })
         .limit(100)
-        .populate('user');
+        .populate("user");
     } else {
-      Transaction.find({ type: 'CLADE', user: req.user._id }, (err, trs) => this.handleResponse(res, next, err, trs))
+      Transaction.find({ type: "CLADE", user: req.user._id }, (err, trs) =>
+        this.handleResponse(res, next, err, trs)
+      )
         .sort({ created: -1 })
         .limit(100)
-        .populate('user');
+        .populate("user");
     }
   }
 
   getCladeTransaction(req, res, next) {
     const transactionId = req.params.transactionId;
-    Transaction.findOne({ _id: transactionId, type: 'CLADE' }, (err, role) => this.handleResponse(res, next, err, role))
-      .populate('user', 'username');
+    Transaction.findOne({ _id: transactionId, type: "CLADE" }, (err, role) =>
+      this.handleResponse(res, next, err, role)
+    ).populate("user", "username");
   }
 
   createCladeTransaction(req, res, next) {
@@ -38,34 +40,44 @@ class TransactionController extends Controller {
     transaction.identifier = req.body.identifier;
     transaction.data = {
       before: req.body.data.before || {},
-      after: req.body.data.after || {},
+      after: req.body.data.after || {}
     };
     transaction.assets = {
       before: req.body.assets.before || [],
-      after: req.body.assets.after || [],
+      after: req.body.assets.after || []
     };
     transaction.mode = req.body.mode.toUpperCase();
     transaction.user = userId;
-    transaction.type = 'CLADE';
-    transaction.status = (transaction.mode === 'DESTROY' && hasChildren) ? 'REVIEW' : 'PENDING';
+    transaction.type = "CLADE";
+    transaction.status =
+      transaction.mode === "DESTROY" && hasChildren ? "REVIEW" : "PENDING";
     transaction.created = Date.now();
     transaction.modified = null;
 
     // When the transaction is saved, start watching it for completion. When done, return a response.
     // This is a really hacky way to make sure new and updated clades appear on the cladogram when
     // the form redirects to it after submission.
-    transaction.save()
-      .then((trans) => (new Promise((resolve, reject) => this.checkTransaction(trans, resolve, reject))))
-      .then((trans) => this.handleResponse(res, next, null, trans))
-      .catch((err) => this.handleResponse(res, next, err))
-    ;
+    transaction
+      .save()
+      .then(
+        trans =>
+          new Promise((resolve, reject) =>
+            this.checkTransaction(trans, resolve, reject)
+          )
+      )
+      .then(trans => this.handleResponse(res, next, null, trans))
+      .catch(err => this.handleResponse(res, next, err));
   }
 
   checkTransaction(transaction, resolve, reject) {
     Transaction.findOne({ _id: transaction._id })
-      .then((trans) => {
-        if (trans.status !== 'PENDING') resolve(trans);
-        else setTimeout(() => this.checkTransaction(transaction, resolve, reject), 1000);
+      .then(trans => {
+        if (trans.status !== "PENDING") resolve(trans);
+        else
+          setTimeout(
+            () => this.checkTransaction(transaction, resolve, reject),
+            1000
+          );
       })
       .catch(reject);
   }
@@ -96,10 +108,12 @@ class TransactionController extends Controller {
 
   destroyCladeTransaction(req, res, next) {
     const transactionId = req.params.transactionId;
-    Transaction.findOne({ _id: transactionId, type: 'CLADE', status: { $in: ['PENDING', 'REVIEW'] } }).remove((err, deleted) =>
+    Transaction.findOne({
+      _id: transactionId,
+      type: "CLADE",
+      status: { $in: ["PENDING", "REVIEW"] }
+    }).remove((err, deleted) =>
       this.handleResponse(res, next, err, { deleted, transactionId })
     );
   }
-}
-
-export default TransactionController;
+};

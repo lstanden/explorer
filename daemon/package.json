@@ -1,8 +1,17 @@
 {
-  "name": "daemon",
+  "name": "@explorer/daemon",
+  "version": "1.0.0",
   "private": true,
   "description": "Background processing daemon for the Phylogeny Explorer",
   "dependencies": {
-    "async": "^2.1.4"
+    "@explorer/common": "1.0.0",
+    "aws-sdk": "^2.458.0",
+    "mongoose": "^5.5.9"
+  },
+  "scripts": {
+    "dev": "npx nodemon src/app.js"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.0"
   }
 }

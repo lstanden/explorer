@@ -1,8 +1,7 @@
-import http from 'http';
-import debug from 'debug';
+const http = require("http");
+const debug = require("debug");
 
-class WebServerFactory {
-
+module.exports = class WebServerFactory {
   constructor(app, preferredPort, name) {
     this._defaultPort = 3000;
     this._preferredPort = process.env.PORT || preferredPort;
@@ -14,18 +13,18 @@ class WebServerFactory {
 
   createAndStartServer() {
     this.port = this.normalizePort();
-    this.app.set('port', this.port);
+    this.app.set("port", this.port);
 
     // Create HTTP server.
     this.server = http.createServer(this.app, (req, res, next) => {
-      res.setHeader('Content-Type', 'application/json');
+      res.setHeader("Content-Type", "application/json");
       next();
     });
 
     // Listen on provided port, on all network interfaces.
     this.server.listen(this.port);
-    this.server.on('error', this.onError.bind(this));
-    this.server.on('listening', this.onListening.bind(this));
+    this.server.on("error", this.onError.bind(this));
+    this.server.on("listening", this.onListening.bind(this));
   }
 
   /**
@@ -53,19 +52,22 @@ class WebServerFactory {
    * @param error
    */
   onError(error) {
-    if (error.syscall !== 'listen') {
+    if (error.syscall !== "listen") {
       throw error;
     }
 
-    const bind = typeof this.port === 'string' ? `Pipe  ${this.port}` : `Port ${this.port}`;
+    const bind =
+      typeof this.port === "string"
+        ? `Pipe  ${this.port}`
+        : `Port ${this.port}`;
 
     // handle specific listen errors with friendly messages
     switch (error.code) {
-      case 'EACCES':
+      case "EACCES":
         console.error(`${bind} requires elevated privileges`);
         process.exit(1);
         break;
-      case 'EADDRINUSE':
+      case "EADDRINUSE":
         console.error(`${bind} is already in use`);
         process.exit(1);
         break;
@@ -79,9 +81,8 @@ class WebServerFactory {
    */
   onListening() {
     const address = this.server.address();
-    const bind = typeof address === 'string'
-      ? `pipe ${address}`
-      : `port ${address.port}`;
+    const bind =
+      typeof address === "string" ? `pipe ${address}` : `port ${address.port}`;
 
     this.debug(`Listening on ${bind}`);
   }
@@ -185,8 +186,4 @@ class WebServerFactory {
   get port() {
     return this._port;
   }
-
-}
-
-
-export default WebServerFactory;
+};
