@@ -1,7 +1,7 @@
-import FixedDataTable from 'fixed-data-table';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import FixedDataTable from 'fixed-data-table-2';
+import withStyles from 'isomorphic-style-loader/withStyles';
 // eslint-disable-next-line import/no-unresolved, max-len, default-export
-import * as tableStyle from '!!isomorphic-style-loader!css?modules=false!fixed-data-table/dist/fixed-data-table.min.css';
+import * as tableStyle from 'fixed-data-table-2/dist/fixed-data-table.min.css';
 // eslint-disable-next-line import/no-unresolved, default-export
 import customTableStyle from './DataTable.css';
 

@@ -1,8 +1,8 @@
 import React from 'react';
-import withStyles from "isomorphic-style-loader/lib/withStyles";
+import withStyles from "isomorphic-style-loader/withStyles";
 import s from './Attribution.css';
 import Attribution from './Attribution';
-import {SensuLabel} from "common/databases/public/constants";
+import {SensuLabel} from "@explorer/common/databases/public/constants";
 import {
   FormControl,
   FormGroup,

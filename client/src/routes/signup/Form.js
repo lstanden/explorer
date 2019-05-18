@@ -5,10 +5,10 @@ import {
   FormControl,
   Checkbox,
   Button,
-  Panel,
+  Card,
   HelpBlock,
 } from 'react-bootstrap';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './Signup.css';
 import Request from '../../core/Request';
 
@@ -215,7 +215,7 @@ class Signup extends React.Component {
                 </FormGroup>
 
                 {(this.state.errors && this.state.errors !== '') ? (
-                  <Panel header="Form Errors" bsStyle="danger">
+                  <Card header="Form Errors" bsStyle="danger">
                     <ul>
                       {Object.keys(this.state.errors).map((error, j) =>
                         <li key={j}>
@@ -223,7 +223,7 @@ class Signup extends React.Component {
                         </li>
                       )}
                     </ul>
-                  </Panel>
+                  </Card>
                 ) : ''}
 
                 <Button id="registerButton" className={s.loginButton}_register type="submit" bsSize="large" block>Register</Button>

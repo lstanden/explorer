@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import 'react-dom';
 import { stateToHTML } from 'draft-js-export-html';
 import { stateFromHTML } from 'draft-js-import-html';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 import {
   AtomicBlockUtils,
   Editor,

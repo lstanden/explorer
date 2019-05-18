@@ -8,11 +8,11 @@
  */
 
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './password-reset.css';
 import Request from '../../core/Request';
 import history from '../../core/history';
-import { FormGroup, FormControl, Alert, Button, ControlLabel, Panel } from 'react-bootstrap';
+import { FormGroup, FormControl, Alert, Button, ControlLabel, Card } from 'react-bootstrap';
 
 class Form extends React.Component {
   constructor(props, context) {
@@ -96,7 +96,7 @@ class Form extends React.Component {
           </FormGroup>
           {
             this.state.errors && this.state.errors !== '' &&
-            <Panel header="Form Errors" bsStyle="danger">
+            <Card header="Form Errors" bsStyle="danger">
               <ul>
                 {Object.keys(this.state.errors).map((error, j) =>
                   <li key={j}>
@@ -104,7 +104,7 @@ class Form extends React.Component {
                   </li>
                 )}
               </ul>
-            </Panel>
+            </Card>
           }
           <Button className={s.loginButton} block type="submit">Save Password</Button>
         </div>

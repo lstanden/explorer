@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Button, ButtonToolbar, Checkbox } from 'react-bootstrap';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 import history from '../../core/history';
 import Request from '../../core/Request';
 import { Table, Column, Cell } from '../../components/DataTable';

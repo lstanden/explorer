@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import FixedDataTable from 'fixed-data-table';
+import FixedDataTable from 'fixed-data-table-2';
 import SetContainerSize from './SetContainerSize';
 import TouchScrollArea  from './TouchScrollArea';
 

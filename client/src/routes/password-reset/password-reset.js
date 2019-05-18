@@ -9,7 +9,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './password-reset.css';
 import PasswordResetForm from './Form';
 import { Grid, Row, Col } from 'react-bootstrap';

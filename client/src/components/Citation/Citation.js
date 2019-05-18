@@ -1,7 +1,7 @@
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './Citation.css';
-import { AttributionType, SensuLabel } from 'common/databases/public/constants';
+import { AttributionType, SensuLabel } from '@explorer/common/databases/public/constants';
 import uuid from "uuid/v4";
 
 class AttributionsCitation extends React.Component {

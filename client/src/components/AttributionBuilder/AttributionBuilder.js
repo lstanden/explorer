@@ -1,7 +1,7 @@
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './AttributionBuilder.css';
-import { AttributionType } from 'common/databases/public/constants';
+import { AttributionType } from '@explorer/common/databases/public/constants';
 import { Preview as CitationPreview } from "../Citation";
 import {
   Attribution,

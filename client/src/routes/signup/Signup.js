@@ -7,9 +7,9 @@ import {
   Checkbox,
   Button,
   ButtonToolbar,
-  Panel,
+  Card,
 } from 'react-bootstrap';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './Signup.css';
 import Request from '../../core/Request';
 import DateChooser from "../../components/Input/DateChooser/DateChooser";
@@ -263,7 +263,7 @@ class Signup extends React.Component {
               </FormGroup>
 
               {(this.state.errors && this.state.errors !== '') ? (
-                <Panel header="Form Errors" bsStyle="danger">
+                <Card header="Form Errors" bsStyle="danger">
                   {this.state.message}
                   <ul>
                     {Object.keys(this.state.errors).map((error, j) =>
@@ -272,7 +272,7 @@ class Signup extends React.Component {
                       </li>
                     )}
                   </ul>
-                </Panel>
+                </Card>
               ) : ''}
               <ButtonToolbar>
                 <Button type="submit" bsStyle="success">

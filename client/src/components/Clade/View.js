@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 import {
   Button,
   ButtonToolbar,
@@ -10,7 +10,7 @@ import {
 import Link from '../../components/Link';
 import s from './View.css';
 import history from '../../core/history';
-import S3 from 'common/aws/s3/Frontend';
+import S3 from '@explorer/common/aws/s3/Frontend';
 import { Citation as AttributionsCitation } from '../Citation';
 import Auth from '../../components/Auth';
 

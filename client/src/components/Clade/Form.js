@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 import {
   FormGroup,
   ControlLabel,
@@ -23,9 +23,9 @@ import history from '../../core/history';
 import Search from '../Search';
 import PhylexEditor from '../Editor';
 import { AttributionBuilder } from '../AttributionBuilder';
-import S3 from 'common/aws/s3/Frontend';
+import S3 from '@explorer/common/aws/s3/Frontend';
 import Link from '../../components/Link';
-import { AttributionType, SensuLabel } from 'common/databases/public/constants';
+import { AttributionType, SensuLabel } from '@explorer/common/databases/public/constants';
 
 class Form extends React.Component {
   static propTypes = {

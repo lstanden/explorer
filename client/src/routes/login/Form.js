@@ -1,11 +1,11 @@
 import React from 'react';
 import Link from '../../components/Link';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './Login.css';
 import Request from '../../core/Request';
 import Auth from '../../components/Auth';
 import history from '../../core/history';
-import { FormGroup, FormControl, Alert, Button, Panel, ControlLabel } from 'react-bootstrap';
+import { FormGroup, FormControl, Alert, Button, Card, ControlLabel } from 'react-bootstrap';
 
 
 class Form extends React.Component {
@@ -76,7 +76,7 @@ class Form extends React.Component {
           </FormGroup>
           {
             (this.state.errors && this.state.errors !== '') &&
-            <Panel header="Form Errors" bsStyle="danger">
+            <Card header="Form Errors" bsStyle="danger">
               <ul>
                 {Object.keys(this.state.errors).map((error, j) =>
                   <li key={j}>
@@ -84,7 +84,7 @@ class Form extends React.Component {
                   </li>
                 )}
               </ul>
-            </Panel>
+            </Card>
           }
           <Button id="loginButton" className={s.loginButton} block type="submit">Log in!</Button>
           <p className={s.forgotPasswordLink}><Link to={`/forgot`}>Forgot your password? Click here.</Link></p>

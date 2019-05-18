@@ -8,7 +8,7 @@ import {
   Tooltip,
   OverlayTrigger,
 } from 'react-bootstrap';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import withStyles from 'isomorphic-style-loader/withStyles';
 import s from './Cladogram.css';
 import Tree from '../../components/Tree';
 import history from '../../core/history';
