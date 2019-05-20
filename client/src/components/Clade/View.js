@@ -1,23 +1,16 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/withStyles';
-import {
-  Button,
-  ButtonToolbar,
-  Image,
-  Clearfix,
-} from 'react-bootstrap';
-import Link from '../../components/Link';
-import s from './View.css';
-import history from '../../core/history';
-import S3 from '@explorer/common/aws/s3/Frontend';
-import { Citation as AttributionsCitation } from '../Citation';
-import Auth from '../../components/Auth';
+import React from "react";
+import PropTypes from "prop-types";
+import { Button, ButtonToolbar, Image, Clearfix } from "react-bootstrap";
+import Link from "../../components/Link";
+import s from "./View.css";
+import history from "../../core/history";
+import S3 from "@explorer/common/aws/s3/Frontend";
+import { Citation as AttributionsCitation } from "../Citation";
+import Auth from "../../components/Auth";
 
-class CladeView extends React.Component {
-
+export default class CladeView extends React.Component {
   static propTypes = {
-    clade: PropTypes.any,
+    clade: PropTypes.any
   };
 
   constructor(props, context) {
@@ -38,7 +31,9 @@ class CladeView extends React.Component {
   }
 
   hasOtherNames() {
-    return this.props.clade.otherNames && this.props.clade.otherNames.length > 0;
+    return (
+      this.props.clade.otherNames && this.props.clade.otherNames.length > 0
+    );
   }
 
   render() {
@@ -46,64 +41,125 @@ class CladeView extends React.Component {
       <div className={s.root}>
         <div className={s.container}>
           <div className={s.content_container}>
-            { Auth.isUserAuthenticated() ? (
+            {Auth.isUserAuthenticated() ? (
               <ButtonToolbar className={s.controls}>
-                <Button id="editButton" type="button" bsStyle="success" onClick={(e) => this.edit(e)}>Edit</Button>
-                <Button id="returnToTreeButton" type="button" bsStyle="info" onClick={(e) => this.goBack(e)}>Return To Tree</Button>
-              </ButtonToolbar>) : (
-                <Button id="returnToTreeButton" type="button" bsStyle="info" onClick={(e) => this.goBack(e)}>Return To Tree</Button>
-              )}
+                <Button
+                  id="editButton"
+                  type="button"
+                  variant="success"
+                  onClick={e => this.edit(e)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  id="returnToTreeButton"
+                  type="button"
+                  variant="info"
+                  onClick={e => this.goBack(e)}
+                >
+                  Return To Tree
+                </Button>
+              </ButtonToolbar>
+            ) : (
+              <Button
+                id="returnToTreeButton"
+                type="button"
+                variant="info"
+                onClick={e => this.goBack(e)}
+              >
+                Return To Tree
+              </Button>
+            )}
 
-            {this.props.clade.parent &&
+            {this.props.clade.parent && (
               <p className={s.clade_parent}>
-                <Link
-                  to={`/clades/info/${this.props.clade.parent._id}`}>{this.props.clade.parent.name || '[UNNAMED]'}
+                <Link to={`/clades/info/${this.props.clade.parent._id}`}>
+                  {this.props.clade.parent.name || "[UNNAMED]"}
                 </Link>
                 <span className="glyphicon glyphicon-menu-right" />
               </p>
-            }
+            )}
 
             <table>
               <tr>
                 <td>
-                  <h1>{!this.props.clade.extant && <sup>†</sup>}{this.props.clade.name}</h1>
+                  <h1>
+                    {!this.props.clade.extant && <sup>†</sup>}
+                    {this.props.clade.name}
+                  </h1>
                 </td>
                 <td className={s.attribution}>
-                  <AttributionsCitation attributions={this.props.clade.attributions} />
+                  <AttributionsCitation
+                    attributions={this.props.clade.attributions}
+                  />
                 </td>
               </tr>
             </table>
 
-            { this.hasOtherNames() && <p className={s.alternate_names}><b>Alternate Names:</b> {this.props.clade.otherNames}</p> }
+            {this.hasOtherNames() && (
+              <p className={s.alternate_names}>
+                <b>Alternate Names:</b> {this.props.clade.otherNames}
+              </p>
+            )}
 
-            <a href={`https://en.wikipedia.org/wiki/${this.props.clade.name}`}>Lookup In Wikipedia</a>
+            <a href={`https://en.wikipedia.org/wiki/${this.props.clade.name}`}>
+              Lookup In Wikipedia
+            </a>
 
             <hr />
 
-            { this.props.clade.description && this.props.clade.description.length > 0
-              ? <div dangerouslySetInnerHTML={{ __html: this.props.clade.description }} />
-              : <p>No description provided.</p>
-            }
+            {this.props.clade.description &&
+            this.props.clade.description.length > 0 ? (
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: this.props.clade.description
+                }}
+              />
+            ) : (
+              <p>No description provided.</p>
+            )}
 
             <div className={s.image_container}>
-              {this.props.clade.assets.map((asset, j) =>
+              {this.props.clade.assets.map((asset, j) => (
                 <div key={j} className={s.thumbnail}>
                   <Image
                     src={S3.getCladeUrl(this.props.clade._id, asset.name)}
                     thumbnail
                   />
                 </div>
-              )}
+              ))}
             </div>
 
             <hr />
-              { Auth.isUserAuthenticated() ? (
+            {Auth.isUserAuthenticated() ? (
               <ButtonToolbar className={s.controls}>
-                <Button id="editButton" type="button" bsStyle="success" onClick={(e) => this.edit(e)}>Edit</Button>
-                <Button id="returnToTreeButton" type="button" bsStyle="info" onClick={(e) => this.goBack(e)}>Return To Tree</Button>
-              </ButtonToolbar>) : (
-                <Button id="returnToTreeButton" type="button" bsStyle="info" onClick={(e) => this.goBack(e)}>Return To Tree</Button>
-              )}
+                <Button
+                  id="editButton"
+                  type="button"
+                  variant="success"
+                  onClick={e => this.edit(e)}
+                >
+                  Edit
+                </Button>
+                <Button
+                  id="returnToTreeButton"
+                  type="button"
+                  variant="info"
+                  onClick={e => this.goBack(e)}
+                >
+                  Return To Tree
+                </Button>
+              </ButtonToolbar>
+            ) : (
+              <Button
+                id="returnToTreeButton"
+                type="button"
+                variant="info"
+                onClick={e => this.goBack(e)}
+              >
+                Return To Tree
+              </Button>
+            )}
           </div>
         </div>
       </div>
@@ -112,5 +168,3 @@ class CladeView extends React.Component {
 }
 
 CladeView.contextTypes = { setTitle: PropTypes.func.isRequired };
-
-export default withStyles(s)(CladeView);

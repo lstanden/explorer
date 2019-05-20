@@ -1,4 +1,4 @@
-const { tree, Controller } = require("../modules");
+const { Tree, Controller } = require("../modules");
 const { Clade } = require("@explorer/common/databases/public");
 const AccessControl = require("../middleware/AccessControl");
 

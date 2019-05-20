@@ -1,56 +1,17 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import history from '../../core/history';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import NextLink from "next/link";
 
-function isLeftClickEvent(event) {
-  return event.button === 0;
+export default function Link(props) {
+  const { to, className, children } = props;
+  return (
+    <NextLink href={to}>
+      <a className={className}>{children}</a>
+    </NextLink>
+  );
 }
 
-function isModifiedEvent(event) {
-  return !!(event.metaKey || event.altKey || event.ctrlKey || event.shiftKey);
-}
-
-class Link extends Component { // eslint-disable-line react/prefer-stateless-function
-
-  static propTypes = {
-    to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-    onClick: PropTypes.func,
-  };
-
-  handleClick = (event) => {
-    let allowTransition = true;
-
-    if (this.props.onClick) {
-      this.props.onClick(event);
-    }
-
-    if (isModifiedEvent(event) || !isLeftClickEvent(event)) {
-      return;
-    }
-
-    if (event.defaultPrevented === true) {
-      allowTransition = false;
-    }
-
-    event.preventDefault();
-
-    if (allowTransition) {
-      if (this.props.to) {
-        history.push(this.props.to);
-      } else {
-        history.push({
-          pathname: event.currentTarget.pathname,
-          search: event.currentTarget.search,
-        });
-      }
-    }
-  };
-
-  render() {
-    const { to, ...props } = this.props; // eslint-disable-line no-use-before-define
-    return <a href={history.createHref(to)} {...props} onClick={this.handleClick} />;
-  }
-
-}
-
-export default Link;
+Link.propTypes = {
+  to: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
+  className: PropTypes.string
+};

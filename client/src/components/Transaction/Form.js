@@ -1,6 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/withStyles';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   FormGroup,
   ControlLabel,
@@ -9,19 +8,18 @@ import {
   ButtonToolbar,
   Grid,
   Col,
-  Row,
-} from 'react-bootstrap';
-import s from './Transaction.css';
-import Request from '../../core/Request';
-import history from '../../core/history';
+  Row
+} from "react-bootstrap";
+import s from "./Transaction.css";
+import Request from "../../core/Request";
+import history from "../../core/history";
 
-let title = '';
+let title = "";
 
-class Form extends React.Component {
-
+export default class Form extends React.Component {
   static propTypes = {
     transaction: PropTypes.any.isRequired,
-    mode: PropTypes.string,
+    mode: PropTypes.string
   };
 
   constructor(props, context) {
@@ -33,27 +31,26 @@ class Form extends React.Component {
 
     const before = {
       data: this.props.transaction.data.before,
-      assets: this.props.transaction.assets.before,
+      assets: this.props.transaction.assets.before
     };
-
 
     const after = {
       data: this.props.transaction.data.after,
-      assets: this.props.transaction.assets.after,
+      assets: this.props.transaction.assets.after
     };
 
     this.state = {
       before: JSON.stringify(before, null, 2),
       after: JSON.stringify(after, null, 2),
       mode: this.props.transaction.mode,
-      identifier: this.props.transaction.identifier,
+      identifier: this.props.transaction.identifier
     };
   }
 
   onChange(e) {
     const model = {};
     this.setState(model);
-    if (e.target.type === 'checkbox') {
+    if (e.target.type === "checkbox") {
       model[e.target.id] = e.target.checked;
     } else {
       model[e.target.id] = e.target.value;
@@ -62,62 +59,69 @@ class Form extends React.Component {
 
   onCancel(e) {
     e.preventDefault();
-    history.push('/transactions');
+    history.push("/transactions");
   }
 
   removeBadCharacters(source) {
-    return source.replace(/\\n/g, '\\n')
+    return source
+      .replace(/\\n/g, "\\n")
       .replace(/\\'/g, "\\'")
       .replace(/\\"/g, '\\"')
-      .replace(/\\&/g, '\\&')
-      .replace(/\\r/g, '\\r')
-      .replace(/\\t/g, '\\t')
-      .replace(/\\b/g, '\\b')
-      .replace(/\\f/g, '\\f');
+      .replace(/\\&/g, "\\&")
+      .replace(/\\r/g, "\\r")
+      .replace(/\\t/g, "\\t")
+      .replace(/\\b/g, "\\b")
+      .replace(/\\f/g, "\\f");
   }
 
   onSubmit(e) {
     e.preventDefault();
-    const before = this.state.before || '{}';
-    const after = this.state.after || '{}';
+    const before = this.state.before || "{}";
+    const after = this.state.after || "{}";
     const postObj = {
       before: JSON.parse(this.removeBadCharacters(before)),
       after: JSON.parse(this.removeBadCharacters(after)),
-      deletion: this.props.transaction.deletion,
+      deletion: this.props.transaction.deletion
     };
 
-    (async() => {
+    (async () => {
       let resp = null;
-      let key = '';
+      let key = "";
       switch (this.props.mode) {
-        case 'Update':
-          resp = await new Request(`/transactions/${this.props.transaction._id}`,
-            'PUT', postObj).fetch();
+        case "Update":
+          resp = await new Request(
+            `/transactions/${this.props.transaction._id}`,
+            "PUT",
+            postObj
+          ).fetch();
           key = resp._id;
           break;
-        case 'Destroy':
-          resp = await new Request(`/transactions/${this.props.transaction._id}`,
-            'DELETE', postObj).fetch();
+        case "Destroy":
+          resp = await new Request(
+            `/transactions/${this.props.transaction._id}`,
+            "DELETE",
+            postObj
+          ).fetch();
           key = resp.transactionId;
           break;
         default:
           break;
       }
 
-      if (key !== '') {
-        history.push('/transactions');
+      if (key !== "") {
+        history.push("/transactions");
       }
     })();
   }
 
   getButtonStyle() {
     switch (this.props.mode) {
-      case 'Destroy':
-        return 'danger';
-      case 'Update':
-        return 'info';
+      case "Destroy":
+        return "danger";
+      case "Update":
+        return "info";
       default:
-        return 'success';
+        return "success";
     }
   }
 
@@ -127,7 +131,7 @@ class Form extends React.Component {
         <div className={s.container}>
           <h1>{title}</h1>
           <hr />
-          <form onSubmit={(e) => this.onSubmit(e)}>
+          <form onSubmit={e => this.onSubmit(e)}>
             <Grid>
               <Row className="show-grid">
                 <Col xs={12} md={5}>
@@ -137,8 +141,8 @@ class Form extends React.Component {
                       componentClass="textarea"
                       rows="15"
                       value={this.state.before}
-                      onChange={(e) => this.onChange(e)}
-                      disabled={this.props.mode === 'Destroy'}
+                      onChange={e => this.onChange(e)}
+                      disabled={this.props.mode === "Destroy"}
                     />
                   </FormGroup>
                 </Col>
@@ -149,8 +153,8 @@ class Form extends React.Component {
                       componentClass="textarea"
                       rows="15"
                       value={this.state.after}
-                      onChange={(e) => this.onChange(e)}
-                      disabled={this.props.mode === 'Destroy'}
+                      onChange={e => this.onChange(e)}
+                      disabled={this.props.mode === "Destroy"}
                     />
                   </FormGroup>
                 </Col>
@@ -161,8 +165,8 @@ class Form extends React.Component {
               <FormControl
                 type="text"
                 value={this.state.mode}
-                onChange={(e) => this.onChange(e)}
-                disabled={this.props.mode === 'Destroy'}
+                onChange={e => this.onChange(e)}
+                disabled={this.props.mode === "Destroy"}
               />
             </FormGroup>
             <FormGroup controlId="identifier">
@@ -170,20 +174,27 @@ class Form extends React.Component {
               <FormControl
                 type="text"
                 value={this.state.identifier}
-                onChange={(e) => this.onChange(e)}
-                disabled={this.props.mode === 'Destroy'}
+                onChange={e => this.onChange(e)}
+                disabled={this.props.mode === "Destroy"}
               />
             </FormGroup>
             <ButtonToolbar>
               <Button
-		id="submitButton"
+                id="submitButton"
                 type="submit"
-                bsStyle={this.getButtonStyle()}
-                style={{ display: this.props.mode === 'Destroy' ? 'block' : 'none' }}
+                variant={this.getButtonStyle()}
+                style={{
+                  display: this.props.mode === "Destroy" ? "block" : "none"
+                }}
               >
                 {this.props.mode}
               </Button>
-              <Button id="cancelButton" type="button" bsStyle="warning" onClick={(e) => this.onCancel(e)}>
+              <Button
+                id="cancelButton"
+                type="button"
+                variant="warning"
+                onClick={e => this.onCancel(e)}
+              >
                 Cancel
               </Button>
             </ButtonToolbar>
@@ -195,5 +206,3 @@ class Form extends React.Component {
 }
 
 Form.contextTypes = { setTitle: PropTypes.func.isRequired };
-
-export default withStyles(s)(Form);

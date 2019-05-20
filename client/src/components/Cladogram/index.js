@@ -1,1 +1,1 @@
-export default from './Cladogram.js';
+export { default } from "./Cladogram.js";

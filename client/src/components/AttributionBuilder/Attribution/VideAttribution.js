@@ -1,12 +1,9 @@
-import React from 'react';
-import withStyles from "isomorphic-style-loader/withStyles";
-import s from './Attribution.css';
-import Attribution from './Attribution';
+import React from "react";
+import s from "./Attribution.css";
+import Attribution from "./Attribution";
 
-class VideAttribution extends React.Component
-{
-  render()
-  {
+export default class VideAttribution extends React.Component {
+  render() {
     return (
       <Attribution
         attribution={this.props.attribution}
@@ -16,5 +13,3 @@ class VideAttribution extends React.Component
     );
   }
 }
-
-export default withStyles(s)(VideAttribution);

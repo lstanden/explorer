@@ -28,9 +28,9 @@ class Auth {
    * @param username
    */
   static authenticateUser(token, role, username) {
-    localStorage.setItem('token', token);
-    localStorage.setItem('role', role);
-    localStorage.setItem('username', username);
+    localStorage.setItem("token", token);
+    localStorage.setItem("role", role);
+    localStorage.setItem("username", username);
     Auth.onAuthenticationStatusChange(true);
   }
 
@@ -40,7 +40,10 @@ class Auth {
    * @returns {boolean}
    */
   static isUserAuthenticated() {
-    return localStorage.getItem('token') !== null;
+    if (!process.browser) {
+      return false;
+    }
+    return localStorage.getItem("token") !== null;
   }
 
   /**
@@ -48,9 +51,9 @@ class Auth {
    *
    */
   static deauthenticateUser() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('role');
-    localStorage.removeItem('username');
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("username");
     Auth.onAuthenticationStatusChange(false);
   }
 
@@ -60,7 +63,7 @@ class Auth {
    * @returns {string}
    */
   static getToken() {
-    return localStorage.getItem('token');
+    return localStorage.getItem("token");
   }
 
   /**
@@ -69,7 +72,7 @@ class Auth {
    * @returns {string}
    */
   static getRole() {
-    return localStorage.getItem('role');
+    return localStorage.getItem("role");
   }
 
   /**
@@ -78,7 +81,7 @@ class Auth {
    * @returns {string}
    */
   static getUsername() {
-    return localStorage.getItem('username');
+    return localStorage.getItem("username");
   }
 }
 

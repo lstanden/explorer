@@ -1,6 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import withStyles from 'isomorphic-style-loader/withStyles';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   FormGroup,
   ControlLabel,
@@ -15,23 +14,26 @@ import {
   Alert,
   ToggleButton,
   ToggleButtonGroup
-} from 'react-bootstrap';
-import Dropzone from 'react-dropzone';
-import s from './Form.css';
-import Request from '../../core/Request';
-import history from '../../core/history';
-import Search from '../Search';
-import PhylexEditor from '../Editor';
-import { AttributionBuilder } from '../AttributionBuilder';
-import S3 from '@explorer/common/aws/s3/Frontend';
-import Link from '../../components/Link';
-import { AttributionType, SensuLabel } from '@explorer/common/databases/public/constants';
+} from "react-bootstrap";
+import Dropzone from "react-dropzone";
+import s from "./Form.css";
+import Request from "../../core/Request";
+import history from "../../core/history";
+import Search from "../Search";
+import PhylexEditor from "../Editor";
+import { AttributionBuilder } from "../AttributionBuilder";
+import S3 from "@explorer/common/aws/s3/Frontend";
+import Link from "../../components/Link";
+import {
+  AttributionType,
+  SensuLabel
+} from "@explorer/common/databases/public/constants";
 
-class Form extends React.Component {
+export default class Form extends React.Component {
   static propTypes = {
     clade: PropTypes.any,
     parent: PropTypes.any,
-    mode: PropTypes.string,
+    mode: PropTypes.string
   };
 
   constructor(props, context) {
@@ -40,32 +42,32 @@ class Form extends React.Component {
     if (context.setTitle) {
       context.setTitle(
         `${this.props.mode} Clade ${
-          this.props.clade ? this.props.clade.name || '[UNNAMED]' : ''
+          this.props.clade ? this.props.clade.name || "[UNNAMED]" : ""
         }`
       );
     }
 
-    if (this.props.mode !== 'Create') {
+    if (this.props.mode !== "Create") {
       this.state = {
         parent: this.props.clade.parent._id,
-        name: this.props.clade.name || '',
+        name: this.props.clade.name || "",
         attributions: this.props.clade.attributions || [],
-        description: this.props.clade.description || '',
+        description: this.props.clade.description || "",
         extant: this.isParentExtinct() ? false : this.props.clade.extant,
-        otherNames: this.props.clade.otherNames || '',
+        otherNames: this.props.clade.otherNames || "",
         assets: this.prepareExistingAssets(),
-        newParent: '',
+        newParent: "",
         newChildren: [],
         imagesToBeDeleted: []
       };
     } else {
       this.state = {
         parent: this.props.parent._id,
-        name: '',
+        name: "",
         attributions: [],
-        description: '',
+        description: "",
         extant: !this.isParentExtinct(),
-        otherNames: '',
+        otherNames: "",
         assets: []
       };
     }
@@ -88,8 +90,8 @@ class Form extends React.Component {
   onChange(e) {
     const model = {};
     this.setState(model);
-    if (e.target.type === 'radio') {
-      if (e.target.id === 'extant') {
+    if (e.target.type === "radio") {
+      if (e.target.id === "extant") {
         model.extant = e.target.checked;
       } else {
         model.extant = false;
@@ -107,13 +109,13 @@ class Form extends React.Component {
   static validateAttribution(attribution) {
     attribution.errors = [];
 
-    if (!attribution.name) attribution.errors.push('Missing attribution name.');
-    if (!attribution.date) attribution.errors.push('Missing attribution date.');
+    if (!attribution.name) attribution.errors.push("Missing attribution name.");
+    if (!attribution.date) attribution.errors.push("Missing attribution date.");
     if (
       attribution.type === AttributionType.Emended &&
       !attribution.emendedOldName
     ) {
-      attribution.errors.push('Missing the old name.');
+      attribution.errors.push("Missing the old name.");
     }
 
     return attribution.errors.length === 0;
@@ -128,9 +130,9 @@ class Form extends React.Component {
   validate() {
     let errors = [];
     if (this.state.extant === null)
-      errors.push('Please select a status (Extant/Extinct)');
+      errors.push("Please select a status (Extant/Extinct)");
     if (!this.validateAttributions())
-      errors.push('Error in one or more attributions.');
+      errors.push("Error in one or more attributions.");
 
     this.setState({ errors });
     return errors.length === 0;
@@ -142,15 +144,15 @@ class Form extends React.Component {
 
     let payload = {};
     switch (this.props.mode) {
-      case 'Create': {
+      case "Create": {
         payload = this.prepareCreatePayload();
         break;
       }
-      case 'Update': {
+      case "Update": {
         payload = this.prepareUpdatePayload();
         break;
       }
-      case 'Destroy': {
+      case "Destroy": {
         payload = this.prepareDestroyPayload();
         break;
       }
@@ -161,11 +163,11 @@ class Form extends React.Component {
 
     this.setState({ submitting: true });
 
-    const resp = await new Request('/transactions', 'POST', payload).fetch();
+    const resp = await new Request("/transactions", "POST", payload).fetch();
 
     const key = resp._id;
 
-    if (key !== '') {
+    if (key !== "") {
       history.goBack();
     } else {
       this.setState({ submitting: false });
@@ -176,7 +178,7 @@ class Form extends React.Component {
     for (let i = 0; i < files.length; i += 1) {
       const file = files[i];
       (async () => {
-        const s3Image = await new Request('/assets/temp', 'POST', {
+        const s3Image = await new Request("/assets/temp", "POST", {
           cladeImg: file
         }).fetch();
         if (s3Image.name) {
@@ -195,13 +197,13 @@ class Form extends React.Component {
     e.preventDefault();
     const newAssets = this.state.assets;
     const postObj = asset;
-    if (asset.folder === 'clades') {
+    if (asset.folder === "clades") {
       postObj.id = this.props.clade._id;
     }
-    const request = await new Request(`/assets/${asset.folder}`, 'DELETE', {
+    const request = await new Request(`/assets/${asset.folder}`, "DELETE", {
       asset: postObj
     });
-    if (asset.folder === 'clades') {
+    if (asset.folder === "clades") {
       const imagesToBeDeleted = this.state.imagesToBeDeleted;
       imagesToBeDeleted.push(request);
       this.setState({ imagesToBeDeleted });
@@ -234,8 +236,8 @@ class Form extends React.Component {
   onSearch(cladeName, cb) {
     (async () => {
       const items = await new Request(
-        '/clades/search',
-        'POST',
+        "/clades/search",
+        "POST",
         { name: cladeName, self: this.props.clade._id },
         Request.endPoints.public
       ).fetch();
@@ -245,12 +247,12 @@ class Form extends React.Component {
 
   getButtonStyle() {
     switch (this.props.mode) {
-      case 'Destroy':
-        return 'danger';
-      case 'Update':
-        return 'info';
+      case "Destroy":
+        return "danger";
+      case "Update":
+        return "info";
       default:
-        return 'success';
+        return "success";
     }
   }
 
@@ -260,7 +262,7 @@ class Form extends React.Component {
       existingAssets.push({
         name: this.props.clade.assets[i].name,
         isDefault: this.props.clade.assets[i].isDefault,
-        folder: 'clades',
+        folder: "clades",
         link: S3.getCladeUrl(
           this.props.clade._id,
           this.props.clade.assets[i].name
@@ -374,7 +376,7 @@ class Form extends React.Component {
   }
 
   _onDragStart(ev) {
-    ev.dataTransfer.setData('phylex-image', ev.target.src);
+    ev.dataTransfer.setData("phylex-image", ev.target.src);
   }
 
   onExtantChange(extant) {
@@ -398,7 +400,7 @@ class Form extends React.Component {
             {this.state.errors && (
               <div id="errors">
                 {this.state.errors.map(err => (
-                  <Alert key={err} bsStyle="danger">
+                  <Alert key={err} variant="danger">
                     {err}
                   </Alert>
                 ))}
@@ -408,7 +410,7 @@ class Form extends React.Component {
               <ButtonToolbar className={s.controls}>
                 <Button
                   type="button"
-                  bsStyle="success"
+                  variant="success"
                   onClick={e => this.onView(e)}
                   disabled={this.state.submitting}
                   id="backToViewButton"
@@ -417,15 +419,15 @@ class Form extends React.Component {
                 </Button>
                 <Button
                   type="submit"
-                  bsStyle={this.getButtonStyle()}
+                  variant={this.getButtonStyle()}
                   disabled={this.state.submitting}
-                  id={this.props.mode + 'Button'}
+                  id={this.props.mode + "Button"}
                 >
                   {this.props.mode}
                 </Button>
                 <Button
                   type="button"
-                  bsStyle="warning"
+                  variant="warning"
                   onClick={e => this.onCancel(e)}
                   disabled={this.state.submitting}
                   id="cancelButton"
@@ -437,23 +439,23 @@ class Form extends React.Component {
               {this.props.clade && this.props.clade.parent && (
                 <p className={s.clade_parent}>
                   <Link to={`/clades/info/${this.props.clade.parent._id}`}>
-                    {this.props.clade.parent.name || '[UNNAMED]'}
+                    {this.props.clade.parent.name || "[UNNAMED]"}
                   </Link>
                   <span className="glyphicon glyphicon-menu-right" />
                 </p>
               )}
 
               <h1>
-                {this.props.mode} Clade{' '}
+                {this.props.mode} Clade{" "}
                 <i>
-                  {this.props.clade ? this.props.clade.name || '[UNNAMED]' : ''}
+                  {this.props.clade ? this.props.clade.name || "[UNNAMED]" : ""}
                 </i>
               </h1>
 
               <hr />
 
-              {this.props.mode === 'Update' && (
-                <Alert bsStyle="warning">
+              {this.props.mode === "Update" && (
+                <Alert variant="warning">
                   <FormGroup controlId="parent" className={s.parent_form_group}>
                     <ControlLabel>Set New Parent</ControlLabel>
                     <Search
@@ -474,7 +476,7 @@ class Form extends React.Component {
                   type="text"
                   value={this.state.name}
                   onChange={e => this.onChange(e)}
-                  disabled={this.props.mode === 'Destroy'}
+                  disabled={this.props.mode === "Destroy"}
                 />
               </FormGroup>
 
@@ -485,7 +487,7 @@ class Form extends React.Component {
                   type="text"
                   value={this.state.otherNames}
                   onChange={e => this.onChange(e)}
-                  disabled={this.props.mode === 'Destroy'}
+                  disabled={this.props.mode === "Destroy"}
                 />
               </FormGroup>
 
@@ -515,7 +517,7 @@ class Form extends React.Component {
                 <PhylexEditor
                   initialValue={this.state.description}
                   onChange={this.onDescriptionChange}
-                  disabled={this.props.mode === 'Destroy'}
+                  disabled={this.props.mode === "Destroy"}
                 />
               </FormGroup>
 
@@ -525,7 +527,7 @@ class Form extends React.Component {
                   attributions={this.state.attributions}
                   onAttributionsChange={this.onAttributionsChange}
                   cladeName={this.state.name}
-                  disabled={this.props.mode === 'Destroy'}
+                  disabled={this.props.mode === "Destroy"}
                 />
               </FormGroup>
 
@@ -537,7 +539,7 @@ class Form extends React.Component {
                       <Dropzone
                         style={{
                           display:
-                            this.props.mode === 'Destroy' ? 'none' : 'table'
+                            this.props.mode === "Destroy" ? "none" : "table"
                         }}
                         onDrop={e => this.onAddImages(e)}
                         className={s.dropzone}
@@ -568,9 +570,9 @@ class Form extends React.Component {
                                   <Button
                                     style={{
                                       display:
-                                        this.props.mode === 'Destroy'
-                                          ? 'none'
-                                          : 'inline-block'
+                                        this.props.mode === "Destroy"
+                                          ? "none"
+                                          : "inline-block"
                                     }}
                                     bsSize="xsmall"
                                     onClick={e => this.onRemoveImage(e, asset)}
@@ -580,9 +582,9 @@ class Form extends React.Component {
                                   <Button
                                     style={{
                                       display:
-                                        this.props.mode === 'Destroy'
-                                          ? 'none'
-                                          : 'inline-block'
+                                        this.props.mode === "Destroy"
+                                          ? "none"
+                                          : "inline-block"
                                     }}
                                     bsSize="xsmall"
                                     onClick={e =>
@@ -591,7 +593,7 @@ class Form extends React.Component {
                                   >
                                     <Glyphicon
                                       glyph={
-                                        asset.isDefault ? 'check' : 'unchecked'
+                                        asset.isDefault ? "check" : "unchecked"
                                       }
                                     />
                                   </Button>
@@ -611,14 +613,14 @@ class Form extends React.Component {
               <ButtonToolbar className={s.controls}>
                 <Button
                   type="submit"
-                  bsStyle={this.getButtonStyle()}
+                  variant={this.getButtonStyle()}
                   disabled={this.state.submitting}
                 >
                   {this.props.mode}
                 </Button>
                 <Button
                   type="button"
-                  bsStyle="warning"
+                  variant="warning"
                   onClick={e => this.onCancel(e)}
                   disabled={this.state.submitting}
                 >
@@ -634,5 +636,3 @@ class Form extends React.Component {
 }
 
 Form.contextTypes = { setTitle: PropTypes.func.isRequired };
-
-export default withStyles(s)(Form);

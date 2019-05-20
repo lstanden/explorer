@@ -1,23 +1,21 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import { Button, ButtonToolbar, Glyphicon } from 'react-bootstrap';
-import withStyles from 'isomorphic-style-loader/withStyles';
-import history from '../../core/history';
-import { Table, Column, Cell } from '../../components/DataTable';
-import s from './Transaction.css';
+import React from "react";
+import PropTypes from "prop-types";
 
-const title = 'Transactions';
+import Button from "react-bootstrap/Button";
+import ButtonToolbar from "react-bootstrap/ButtonToolbar";
+import { Table, Column, Cell } from "@src/components/DataTable";
 
-class List extends React.Component {
+import s from "./Transaction.scss";
+
+const title = "Transactions";
+
+export default class List extends React.Component {
   static propTypes = {
-    transactions: PropTypes.any.isRequired,
+    transactions: PropTypes.any.isRequired
   };
 
-  constructor(props, context) {
+  constructor(props) {
     super(props);
-    if (context.setTitle) {
-      context.setTitle(title);
-    }
   }
 
   onUpdate(e, id) {
@@ -83,7 +81,9 @@ class List extends React.Component {
               header={<Cell>Created</Cell>}
               cell={props => (
                 <Cell {...props}>
-                  {(new Date(this.props.transactions[props.rowIndex].created)).toUTCString()}
+                  {new Date(
+                    this.props.transactions[props.rowIndex].created
+                  ).toUTCString()}
                 </Cell>
               )}
               width={300}
@@ -95,20 +95,34 @@ class List extends React.Component {
                   <ButtonToolbar>
                     <Button
                       type="button"
-                      onClick={(e) => this.onUpdate(e, this.props.transactions[props.rowIndex]._id)}
-                      bsStyle="default"
+                      onClick={e =>
+                        this.onUpdate(
+                          e,
+                          this.props.transactions[props.rowIndex]._id
+                        )
+                      }
+                      variant="default"
                     >
-                      <Glyphicon glyph="info-sign" />
+                      {/* <Glyphicon glyph="info-sign" /> */}
                     </Button>
                     <Button
                       type="button"
-                      style={{ display: this.props.transactions[props.rowIndex].status === 'DONE' ?
-                        'none' : 'block' }}
-                      onClick={(e) =>
-                        this.onDestroy(e, this.props.transactions[props.rowIndex]._id)}
-                      bsStyle="danger"
+                      style={{
+                        display:
+                          this.props.transactions[props.rowIndex].status ===
+                          "DONE"
+                            ? "none"
+                            : "block"
+                      }}
+                      onClick={e =>
+                        this.onDestroy(
+                          e,
+                          this.props.transactions[props.rowIndex]._id
+                        )
+                      }
+                      variant="danger"
                     >
-                      <Glyphicon glyph="trash" />
+                      {/* <Glyphicon glyph="trash" /> */}
                     </Button>
                   </ButtonToolbar>
                 </Cell>
@@ -123,5 +137,3 @@ class List extends React.Component {
 }
 
 List.contextTypes = { setTitle: PropTypes.func.isRequired };
-
-export default withStyles(s)(List);

@@ -1,2 +1,2 @@
-export Citation from './Citation';
-export Preview from './Preview';
+export { default as Citation } from "./Citation";
+export { default as Preview } from "./Preview";

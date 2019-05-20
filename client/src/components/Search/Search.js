@@ -1,12 +1,11 @@
 import React from "react";
 import PropTypes from "prop-types";
 import AutoComplete from "react-autocomplete";
-import withStyles from "isomorphic-style-loader/withStyles";
-import s from "./Search.css";
+import s from "./Search.scss";
 import { debounce } from "throttle-debounce";
 import reactStringReplace from "react-string-replace";
 
-class Search extends React.Component {
+export default class Search extends React.Component {
   static propTypes = {
     onSelect: PropTypes.any.isRequired,
     onSearch: PropTypes.any.isRequired,
@@ -58,14 +57,13 @@ class Search extends React.Component {
   }
 
   onRenderItem(item, isHighlighted) {
-    console.log(this.state.value);
     let name = reactStringReplace(item.name, this.state.value, (match, i) => (
-      <span className={s.match}>{match}</span>
+      <span key={i} className={s.match}>{match}</span>
     ));
 
     let otherNames = item.otherNames
       ? reactStringReplace(item.otherNames, this.state.value, (match, i) => (
-          <span className={s.match}>{match}</span>
+          <span key={i} className={s.match}>{match}</span>
         ))
       : null;
 
@@ -131,5 +129,3 @@ class Search extends React.Component {
     );
   }
 }
-
-export default withStyles(s)(Search);

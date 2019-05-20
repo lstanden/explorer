@@ -1,23 +1,18 @@
-import React from 'react';
-import withStyles from 'isomorphic-style-loader/withStyles';
-import s from './Feedback.css';
+import React from "react";
+import s from "./Feedback.css";
 
-function Feedback() {
+export default function Feedback() {
   return (
     <div className={s.root}>
       <div className={s.container}>
-        <a
-          className={s.link}
-          href="#"
-        >Ask a question</a>
+        <a className={s.link} href="#">
+          Ask a question
+        </a>
         <span className={s.spacer}>|</span>
-        <a
-          className={s.link}
-          href="#"
-        >Report an issue</a>
+        <a className={s.link} href="#">
+          Report an issue
+        </a>
       </div>
     </div>
   );
 }
-
-export default withStyles(s)(Feedback);

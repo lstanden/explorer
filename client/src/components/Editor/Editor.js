@@ -1,9 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import 'react-dom';
-import { stateToHTML } from 'draft-js-export-html';
-import { stateFromHTML } from 'draft-js-import-html';
-import withStyles from 'isomorphic-style-loader/withStyles';
+import React from "react";
+import PropTypes from "prop-types";
+import "react-dom";
+import { stateToHTML } from "draft-js-export-html";
+import { stateFromHTML } from "draft-js-import-html";
 import {
   AtomicBlockUtils,
   Editor,
@@ -12,32 +11,36 @@ import {
   Entity,
   ContentState,
   convertFromHTML,
-  CompositeDecorator,
-} from 'draft-js';
-import MediaBlockRenderer from './MediaBlockRenderer';
-import { BlockStyleControls, InlineStyleControls, getBlockStyle } from './RichControls';
-import s from './RichEditor.css';
+  CompositeDecorator
+} from "draft-js";
+import MediaBlockRenderer from "./MediaBlockRenderer";
+import {
+  BlockStyleControls,
+  InlineStyleControls,
+  getBlockStyle
+} from "./RichControls";
+import s from "./RichEditor.css";
 
 function findLinkEntities(contentBlock, callback, contentState) {
-  contentBlock.findEntityRanges(
-    (character) => {
-      const entityKey = character.getEntity();
-      return (
-        entityKey !== null &&
-        contentState.getEntity(entityKey).getType() === 'LINK'
-      );
-    },
-    callback
-  );
+  contentBlock.findEntityRanges(character => {
+    const entityKey = character.getEntity();
+    return (
+      entityKey !== null &&
+      contentState.getEntity(entityKey).getType() === "LINK"
+    );
+  }, callback);
 }
 
-const Link = (props) => {
+const Link = props => {
   const { url } = props.contentState.getEntity(props.entityKey).getData();
   return (
-    <a href={url} style={{
-      color: '#3b5998',
-      textDecoration: 'underline',
-    }}>
+    <a
+      href={url}
+      style={{
+        color: "#3b5998",
+        textDecoration: "underline"
+      }}
+    >
       {props.children}
     </a>
   );
@@ -45,58 +48,57 @@ const Link = (props) => {
 
 const options = {
   blockRenderers: {
-    atomic: (block) => `<img src="${block.getText()}" />`,
-  },
+    atomic: block => `<img src="${block.getText()}" />`
+  }
 };
 
-const Image = (props) => {
+const Image = props => {
   const { src } = props.contentState.getEntity(props.entityKey).getData();
-  return (
-    <img src={src} />
-  );
+  return <img src={src} />;
 };
 
 function findImageEntities(contentBlock, callback, contentState) {
-  contentBlock.findEntityRanges(
-    (character) => {
-      const entityKey = character.getEntity();
-      return (
-        entityKey !== null &&
-        contentState.getEntity(entityKey).getType() === 'IMAGE'
-      );
-    },
-    callback
-  );
+  contentBlock.findEntityRanges(character => {
+    const entityKey = character.getEntity();
+    return (
+      entityKey !== null &&
+      contentState.getEntity(entityKey).getType() === "IMAGE"
+    );
+  }, callback);
 }
 
-class PhylexEditor extends React.Component {
+export default class PhylexEditor extends React.Component {
   constructor(props) {
     super(props);
 
     const decorator = new CompositeDecorator([
       {
         strategy: findImageEntities,
-        component: Image,
+        component: Image
       },
       {
         strategy: findLinkEntities,
-        component: Link,
-      },
+        component: Link
+      }
     ]);
 
-    const blocksFromHTML = props.initialValue ? convertFromHTML(props.initialValue) : null;
-    const contentState = (!blocksFromHTML || !blocksFromHTML.contentBlocks)
-      ? null
-      : ContentState.createFromBlockArray(
-        blocksFromHTML.contentBlocks,
-        blocksFromHTML.entityMap,
-      );
+    const blocksFromHTML = props.initialValue
+      ? convertFromHTML(props.initialValue)
+      : null;
+    const contentState =
+      !blocksFromHTML || !blocksFromHTML.contentBlocks
+        ? null
+        : ContentState.createFromBlockArray(
+            blocksFromHTML.contentBlocks,
+            blocksFromHTML.entityMap
+          );
 
     this.state = {
-      editorState: contentState ? EditorState.createWithContent(contentState, decorator) : EditorState.createEmpty(),
-      linkAddress: '',
+      editorState: contentState
+        ? EditorState.createWithContent(contentState, decorator)
+        : EditorState.createEmpty(),
+      linkAddress: ""
     };
-
 
     this._onChange = this._onChange.bind(this);
     this._handleKeyCommand = this._handleKeyCommand.bind(this);
@@ -104,9 +106,9 @@ class PhylexEditor extends React.Component {
     this.editor = null;
     this._onConvertToLink = this._onConvertToLink.bind(this);
     this.focus = () => this.editor.focus();
-    this.onTab = (e) => this._onTab(e);
-    this.toggleBlockType = (type) => this._toggleBlockType(type);
-    this.toggleInlineStyle = (style) => this._toggleInlineStyle(style);
+    this.onTab = e => this._onTab(e);
+    this.toggleBlockType = type => this._toggleBlockType(type);
+    this.toggleInlineStyle = style => this._toggleInlineStyle(style);
     this._onLinkAddressChange = this._onLinkAddressChange.bind(this);
   }
 
@@ -121,50 +123,52 @@ class PhylexEditor extends React.Component {
 
   _toggleBlockType(blockType) {
     this._onChange(
-      RichUtils.toggleBlockType(
-        this.state.editorState,
-        blockType
-      )
+      RichUtils.toggleBlockType(this.state.editorState, blockType)
     );
   }
 
   _onChange(editorState) {
     this.setState({ editorState }, () => {
-      this.props.onChange(stateToHTML(this.state.editorState.getCurrentContent(), options));
+      this.props.onChange(
+        stateToHTML(this.state.editorState.getCurrentContent(), options)
+      );
     });
   }
 
   _toggleInlineStyle(inlineStyle) {
     this._onChange(
-      RichUtils.toggleInlineStyle(
-        this.state.editorState,
-        inlineStyle
-      )
+      RichUtils.toggleInlineStyle(this.state.editorState, inlineStyle)
     );
   }
 
   _onDrop(selectionState, dataTransfer) {
-    const imgSrc = dataTransfer.data.getData('phylex-image');
+    const imgSrc = dataTransfer.data.getData("phylex-image");
     this._addImage(imgSrc);
     return true;
   }
 
   _addImage(urlValue) {
     const { editorState } = this.state;
-    const entityKey = Entity.create('image', 'IMMUTABLE', { src: urlValue });
-    this.setState({
-      editorState: AtomicBlockUtils.insertAtomicBlock(
-        editorState,
-        entityKey,
-        urlValue
-      ),
-    }, () => {
-      setTimeout(() => this.editor.focus(), 0);
-    });
+    const entityKey = Entity.create("image", "IMMUTABLE", { src: urlValue });
+    this.setState(
+      {
+        editorState: AtomicBlockUtils.insertAtomicBlock(
+          editorState,
+          entityKey,
+          urlValue
+        )
+      },
+      () => {
+        setTimeout(() => this.editor.focus(), 0);
+      }
+    );
   }
 
   _handleKeyCommand(command) {
-    const newState = RichUtils.handleKeyCommand(this.state.editorState, command);
+    const newState = RichUtils.handleKeyCommand(
+      this.state.editorState,
+      command
+    );
     if (newState) {
       this._onChange(newState);
       return true;
@@ -176,41 +180,56 @@ class PhylexEditor extends React.Component {
     const { editorState } = this.state;
     const contentState = editorState.getCurrentContent();
     const contentStateWithEntity = contentState.createEntity(
-      'LINK',
-      'MUTABLE',
+      "LINK",
+      "MUTABLE",
       { url: this.state.linkAddress }
     );
     const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
-    const newEditorState = EditorState.set(editorState, { currentContent: contentStateWithEntity });
-    this.setState({
-      editorState: RichUtils.toggleLink(
-        newEditorState,
-        newEditorState.getSelection(),
-        entityKey,
-      ),
-      linkAddress: '',
-    }, () => {
-      setTimeout(() => this.editor.focus(), 0);
+    const newEditorState = EditorState.set(editorState, {
+      currentContent: contentStateWithEntity
     });
+    this.setState(
+      {
+        editorState: RichUtils.toggleLink(
+          newEditorState,
+          newEditorState.getSelection(),
+          entityKey
+        ),
+        linkAddress: ""
+      },
+      () => {
+        setTimeout(() => this.editor.focus(), 0);
+      }
+    );
   }
 
   render() {
     // If the user changes block type before entering any text, we can
     // either style the placeholder or hide it. Let's just hide it now.
-    let className = s['RichEditor-editor'];
+    let className = s["RichEditor-editor"];
     const contentState = this.state.editorState.getCurrentContent();
     if (!contentState.hasText()) {
-      if (contentState.getBlockMap().first().getType() !== 'unstyled') {
-        className += ` ${s['RichEditor-hideplaceholder']}`;
+      if (
+        contentState
+          .getBlockMap()
+          .first()
+          .getType() !== "unstyled"
+      ) {
+        className += ` ${s["RichEditor-hideplaceholder"]}`;
       }
     }
 
     return (
-      <div className={s['RichEditor-root']}>
+      <div className={s["RichEditor-root"]}>
         {!this.props.disabled && (
           <div>
             <div>
-              <a className={s['link-generator-btn']} onClick={this._onConvertToLink}>LINK</a>
+              <a
+                className={s["link-generator-btn"]}
+                onClick={this._onConvertToLink}
+              >
+                LINK
+              </a>
               <input
                 type="text"
                 onChange={this._onLinkAddressChange}
@@ -237,7 +256,7 @@ class PhylexEditor extends React.Component {
             handleKeyCommand={this._handleKeyCommand}
             onChange={this._onChange}
             placeholder="Start typing here..."
-            ref={(ref) => this.editor = ref}
+            ref={ref => (this.editor = ref)}
             readOnly={this.props.disabled}
             spellCheck
           />
@@ -250,7 +269,5 @@ class PhylexEditor extends React.Component {
 PhylexEditor.propTypes = {
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool.isRequired,
-  initialValue: PropTypes.string.isRequired,
+  initialValue: PropTypes.string.isRequired
 };
-
-export default withStyles(s)(PhylexEditor);

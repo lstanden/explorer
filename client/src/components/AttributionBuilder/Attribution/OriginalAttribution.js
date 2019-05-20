@@ -1,27 +1,22 @@
-import React from 'react';
-import withStyles from "isomorphic-style-loader/withStyles";
-import s from './Attribution.css';
-import Attribution from './Attribution';
-import {
-  Checkbox,
-} from 'react-bootstrap';
+import React from "react";
+import s from "./Attribution.css";
+import Attribution from "./Attribution";
+import { Checkbox } from "react-bootstrap";
 
-class OriginalAttribution extends React.Component
-{
-  componentWillMount()
-  {
+export default class OriginalAttribution extends React.Component {
+  componentWillMount() {
     this.onImpliedChanged(false);
   }
 
-  onImpliedChanged(isImplied)
-  {
-    this.props.onChange(Object.assign({}, this.props.attribution, {
-      isImplied
-    }));
+  onImpliedChanged(isImplied) {
+    this.props.onChange(
+      Object.assign({}, this.props.attribution, {
+        isImplied
+      })
+    );
   }
 
-  render()
-  {
+  render() {
     return (
       <Attribution
         attribution={this.props.attribution}
@@ -29,9 +24,10 @@ class OriginalAttribution extends React.Component
         onDelete={this.props.onDelete}
         extraField={
           <Checkbox
-              className={s.impliedbox}
-              checked={this.props.attribution.isImplied || false}
-              onChange={(e) => this.onImpliedChanged(e.target.checked)}>
+            className={s.impliedbox}
+            checked={this.props.attribution.isImplied || false}
+            onChange={e => this.onImpliedChanged(e.target.checked)}
+          >
             Implied
           </Checkbox>
         }
@@ -39,5 +35,3 @@ class OriginalAttribution extends React.Component
     );
   }
 }
-
-export default withStyles(s)(OriginalAttribution);

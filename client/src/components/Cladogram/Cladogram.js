@@ -1,49 +1,64 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import {
-  FormGroup,
-  FormControl,
-  Form,
-  Button,
-  Tooltip,
-  OverlayTrigger,
-} from 'react-bootstrap';
-import withStyles from 'isomorphic-style-loader/withStyles';
-import s from './Cladogram.css';
-import Tree from '../../components/Tree';
-import history from '../../core/history';
-import Pane from './Pane';
-import Search from '../../components/Search';
-import Request from '../../core/Request';
+import React from "react";
+import PropTypes from "prop-types";
+import Head from "next/head";
+import { FormattedMessage, defineMessages } from "react-intl";
+import Router from "next/router";
+
+import FormControl from "react-bootstrap/FormControl";
+import FormGroup from "react-bootstrap/FormGroup";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+import Tooltip from "react-bootstrap/Tooltip";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+
+import Tree from "@src/components/Tree";
+import Pane from "./Pane";
+import Search from "@src/components/Search";
+import Request from "@src/core/Request";
+
+import strings from "@src/strings";
+import s from "./Cladogram.scss";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const HEADER_HEIGHT = 62;
 
-const resetViewTooltip = (<Tooltip>Reset Zoom / Center Cladogram</Tooltip>);
-const depthTooltip = (<Tooltip>Depth</Tooltip>);
+const messages = defineMessages({
+  resetZoom: "Reset Zoom / Center Cladogram",
+  depth: "Depth"
+});
 
-class Cladogram extends React.Component {
+const resetViewTooltip = (
+  <Tooltip>
+    <FormattedMessage {...messages.resetZoom} />
+  </Tooltip>
+);
+const depthTooltip = (
+  <Tooltip>
+    <FormattedMessage {...messages.depth} />
+  </Tooltip>
+);
+
+export default class Cladogram extends React.Component {
   static propTypes = {
     root: PropTypes.any.isRequired,
     depth: PropTypes.number.isRequired,
     actualDepth: PropTypes.number.isRequired,
-    total: PropTypes.number.isRequired,
+    total: PropTypes.number.isRequired
   };
 
   constructor(props, context) {
     super(props);
-    if (context.setTitle) {
-      context.setTitle('Phylogeny Explorer');
-    }
     this.prepareState(props);
     this.resetView = this.resetView.bind(this);
   }
 
   componentDidMount() {
     const dims = document.getElementsByClassName(s.container)[0];
-    dims && this.setState({
-      width: dims.clientWidth,
-      height: window.innerHeight - HEADER_HEIGHT,
-    });
+    dims &&
+      this.setState({
+        width: dims.clientWidth,
+        height: window.innerHeight - HEADER_HEIGHT
+      });
   }
 
   componentWillReceiveProps(newProps) {
@@ -57,7 +72,7 @@ class Cladogram extends React.Component {
       actualDepth: newProps.actualDepth,
       id: newProps.root._id,
       scale: 1,
-      matrix: [1, 0, 0, 1, 0, 0],
+      matrix: [1, 0, 0, 1, 0, 0]
     });
   }
 
@@ -66,27 +81,37 @@ class Cladogram extends React.Component {
   }
 
   async onSearchClade(cladeName, cb) {
-    const items = await
-      new Request('/clades/search', 'POST',
-        { name: cladeName },
-        Request.endPoints.public)
-        .fetch();
+    const items = await new Request(
+      "/clades/search",
+      "POST",
+      { name: cladeName },
+      Request.endPoints.public
+    ).fetch();
     cb(items);
   }
 
-  onSelectClade(id, value) {
-    history.push(`/clades/${id}/depth/${this.state.depth}`);
-  }
+  onSelectClade = (id, value) => {
+    Router.push(
+      `/clades?cladeId=${id}&depth=${this.state.depth}`,
+      `/clades/${id}/depth/${this.state.depth}`
+    );
+  };
 
-  onSelectNode(node) {
+  onSelectNode = node => {
     if (node.id === this.state.id) {
       if (this.state.root.parent != null) {
-        history.push(`/clades/${this.state.root.parent}/depth/${this.state.depth}`);
+        Router.push(
+          `/clades?cladeId=${this.state.root.parent}&depth=${this.state.depth}`,
+          `/clades/${this.state.root.parent}/depth/${this.state.depth}`
+        );
       }
     } else {
-      history.push(`/clades/${node.id}/depth/${this.state.depth}`);
+      Router.push(
+        `/clades?cladeId=${node.id}&depth=${this.state.depth}`,
+        `/clades/${node.id}/depth/${this.state.depth}`
+      );
     }
-  }
+  };
 
   prepareState(props) {
     this.state = {
@@ -98,7 +123,7 @@ class Cladogram extends React.Component {
       width: 0,
       height: 0,
       scale: 1,
-      matrix: [1, 0, 0, 1, 0, 0],
+      matrix: [1, 0, 0, 1, 0, 0]
     };
   }
 
@@ -110,28 +135,41 @@ class Cladogram extends React.Component {
   render() {
     let options = [];
     for (let i = 1; i <= 9; i++) {
-      options.push(<option key={i} value={i}>{i}</option>);
+      options.push(
+        <option key={i} value={i}>
+          {i}
+        </option>
+      );
     }
 
     return (
       <div className={s.container}>
+        <FormattedMessage {...strings.name}>
+          {name => (
+            <Head>
+              <title>
+                {name} - {this.state.root.name}
+              </title>
+            </Head>
+          )}
+        </FormattedMessage>
         <Form inline className={s.search_form}>
           <FormGroup controlId="search" className={s.search_form_group}>
             <Search
               id="search"
               name="search"
               placeholder="Search for Clade"
-              onSelect={(id, value) => this.onSelectClade(id, value)}
-              onSearch={(name, cb) => this.onSearchClade(name, cb)}
+              onSelect={this.onSelectClade}
+              onSearch={this.onSearchClade}
               inline
             />
           </FormGroup>
           <OverlayTrigger placement="bottom" overlay={depthTooltip}>
             <FormGroup controlId="depth" className={s.depth_form_group}>
               <FormControl
-                componentClass="select"
+                as="select"
                 value={this.state.depth}
-                onChange={(e) => this.onChangeDepth(e)}
+                onChange={this.onChangeDepth}
                 required
               >
                 <option value="2">2</option>
@@ -150,23 +188,21 @@ class Cladogram extends React.Component {
           root={this.state.root}
           width={this.state.width}
           height={this.state.height}
-          onSelectNode={(e) => this.onSelectNode(e)}
+          onSelectNode={this.onSelectNode}
           popoverComponent={Pane}
           depth={this.state.actualDepth}
           matrix={this.state.matrix}
         />
         <OverlayTrigger placement="left" overlay={resetViewTooltip}>
           <Button
-            bsStyle="default"
+            variant="default"
             className={s.reset_button}
-            onClick={e => this.resetView(e)}
-          ><span className="glyphicon glyphicon-screenshot" /></Button>
+            onClick={this.resetView}
+          >
+            <FontAwesomeIcon icon="compress-arrows-alt" />
+          </Button>
         </OverlayTrigger>
       </div>
     );
   }
 }
-
-Cladogram.contextTypes = { setTitle: PropTypes.func.isRequired };
-
-export default withStyles(s)(Cladogram);

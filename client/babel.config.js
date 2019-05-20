@@ -1,7 +1,8 @@
 module.exports = {
-  presets: ["@babel/preset-env", "@babel/preset-react"],
+  presets: ["next/babel"],
   plugins: [
-    "@babel/plugin-proposal-class-properties",
-    "@babel/plugin-proposal-export-default-from"
+    ["module-resolver", { alias: { "@src": "./src" } }],
+    ["react-intl-auto", { removePrefix: "src/" }],
+    "import-graphql"
   ]
 };

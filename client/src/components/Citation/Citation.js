@@ -1,66 +1,84 @@
-import React from 'react';
-import withStyles from 'isomorphic-style-loader/withStyles';
-import s from './Citation.css';
-import { AttributionType, SensuLabel } from '@explorer/common/databases/public/constants';
+import React from "react";
+import s from "./Citation.scss";
+import {
+  AttributionType,
+  SensuLabel
+} from "@explorer/common/databases/public/constants";
 import uuid from "uuid/v4";
 
-class AttributionsCitation extends React.Component {
-
-  constructor(props)
-  {
+export default class AttributionsCitation extends React.Component {
+  constructor(props) {
     super(props);
-    this.props.attributions.forEach(attribution => (attribution.index = uuid()));
+    this.props.attributions.forEach(
+      attribution => (attribution.index = uuid())
+    );
   }
 
-  getAttributionsByType(type)
-  {
-    return this.props.attributions.filter(attribution => (attribution.type === type));
+  getAttributionsByType(type) {
+    return this.props.attributions.filter(
+      attribution => attribution.type === type
+    );
   }
 
-  getCitationNameDate(attribution)
-  {
+  getCitationNameDate(attribution) {
     let citationParts = [];
     if (attribution.name) citationParts.push(attribution.name.trim());
     if (attribution.date) citationParts.push(attribution.date.trim());
-    return citationParts.join(', ');
+    return citationParts.join(", ");
   }
 
-  getOriginalCitation(attribution)
-  {
-    let prefix = attribution.isImplied ? '[implied in ' : '';
-    let suffix = attribution.isImplied ? ']' : '';
+  getOriginalCitation(attribution) {
+    let prefix = attribution.isImplied ? "[implied in " : "";
+    let suffix = attribution.isImplied ? "]" : "";
     let citation = this.getCitationNameDate(attribution);
-    return <span key={attribution.index} className={s.citation_part}>{prefix}{citation}{suffix}</span>;
+    return (
+      <span key={attribution.index} className={s.citation_part}>
+        {prefix}
+        {citation}
+        {suffix}
+      </span>
+    );
   }
 
-  getVideCitation(attribution)
-  {
+  getVideCitation(attribution) {
     let citation = this.getCitationNameDate(attribution);
-    return <span key={attribution.index} className={s.citation_part}><i>vide</i> {citation}</span>;
+    return (
+      <span key={attribution.index} className={s.citation_part}>
+        <i>vide</i> {citation}
+      </span>
+    );
   }
 
-  getSensuCitation(attribution)
-  {
+  getSensuCitation(attribution) {
     let citation = this.getCitationNameDate(attribution);
-    let clade = attribution.sensuClade ? `"${attribution.sensuClade}"` : '';
-    return <span key={attribution.index} className={s.citation_part}><i>{SensuLabel[attribution.sensuLabel]}</i> {citation} {clade}</span>
+    let clade = attribution.sensuClade ? `"${attribution.sensuClade}"` : "";
+    return (
+      <span key={attribution.index} className={s.citation_part}>
+        <i>{SensuLabel[attribution.sensuLabel]}</i> {citation} {clade}
+      </span>
+    );
   }
 
-  getNonCitation(attribution)
-  {
+  getNonCitation(attribution) {
     let citation = this.getCitationNameDate(attribution);
-    let clade = attribution.sensuClade ? `"${attribution.sensuClade}"` : '';
-    return <span key={attribution.index} className={s.citation_part}><i>non</i> {citation} {clade}</span>
+    let clade = attribution.sensuClade ? `"${attribution.sensuClade}"` : "";
+    return (
+      <span key={attribution.index} className={s.citation_part}>
+        <i>non</i> {citation} {clade}
+      </span>
+    );
   }
 
-  getEmendedCitation(attribution)
-  {
+  getEmendedCitation(attribution) {
     let citation = this.getCitationNameDate(attribution);
-    return <span key={attribution.index} className={s.citation_part}>emended {citation} "{attribution.emendedOldName}"</span>;
+    return (
+      <span key={attribution.index} className={s.citation_part}>
+        emended {citation} "{attribution.emendedOldName}"
+      </span>
+    );
   }
 
-  getAttributionComponent(attribution)
-  {
+  getAttributionComponent(attribution) {
     switch (attribution.type) {
       case AttributionType.Original:
         return this.getOriginalCitation(attribution);
@@ -79,8 +97,7 @@ class AttributionsCitation extends React.Component {
     }
   }
 
-  render()
-  {
+  render() {
     let original = this.getAttributionsByType(AttributionType.Original).pop();
     let vide = this.getAttributionsByType(AttributionType.Vide).pop();
 
@@ -93,13 +110,13 @@ class AttributionsCitation extends React.Component {
 
     return (
       <span className={s.citation}>
-        { this.props.clade && <b>{this.props.clade}</b> }
-        { original && this.getAttributionComponent(original) }
-        { vide && this.getAttributionComponent(vide) }
-        { otherAttributions.map(attribution => (this.getAttributionComponent(attribution))) }
+        {this.props.clade && <b>{this.props.clade}</b>}
+        {original && this.getAttributionComponent(original)}
+        {vide && this.getAttributionComponent(vide)}
+        {otherAttributions.map(attribution =>
+          this.getAttributionComponent(attribution)
+        )}
       </span>
     );
   }
 }
-
-export default withStyles(s)(AttributionsCitation);

@@ -1,7 +1,6 @@
-import React from 'react';
-import withStyles from 'isomorphic-style-loader/withStyles';
-import s from './AttributionBuilder.css';
-import { AttributionType } from '@explorer/common/databases/public/constants';
+import React from "react";
+import s from "./AttributionBuilder.css";
+import { AttributionType } from "@explorer/common/databases/public/constants";
 import { Preview as CitationPreview } from "../Citation";
 import {
   Attribution,
@@ -9,19 +8,13 @@ import {
   VideAttribution,
   EmendedAttribution,
   SensuAttribution,
-  NonAttribution,
-} from './Attribution';
-import uuid from 'uuid/v4';
-import {
-  Dropdown,
-  MenuItem,
-  Glyphicon
-} from 'react-bootstrap';
+  NonAttribution
+} from "./Attribution";
+import uuid from "uuid/v4";
+import { Dropdown, MenuItem, Glyphicon } from "react-bootstrap";
 
-class AttributionsBuilder extends React.Component {
-
-  constructor(props)
-  {
+export default class AttributionsBuilder extends React.Component {
+  constructor(props) {
     super(props);
     this.props.attributions.forEach(AttributionsBuilder._decorateAttribution);
 
@@ -29,43 +22,43 @@ class AttributionsBuilder extends React.Component {
     this.onAttributionChanged = this.onAttributionChanged.bind(this);
   }
 
-  addAttribution(type)
-  {
+  addAttribution(type) {
     this.props.onAttributionsChange([
       ...this.props.attributions,
-      AttributionsBuilder._decorateAttribution({type})
+      AttributionsBuilder._decorateAttribution({ type })
     ]);
   }
 
-  static _decorateAttribution(attribution)
-  {
+  static _decorateAttribution(attribution) {
     attribution.index = uuid();
     attribution.errors = [];
     return attribution;
   }
 
-  delete(deletedAttribution)
-  {
+  delete(deletedAttribution) {
     this.props.onAttributionsChange(
-      this.props.attributions.filter(attribution => (attribution.index !== deletedAttribution.index))
+      this.props.attributions.filter(
+        attribution => attribution.index !== deletedAttribution.index
+      )
     );
   }
 
-  onAttributionChanged(updatedAttribution)
-  {
+  onAttributionChanged(updatedAttribution) {
     const attributions = [...this.props.attributions];
-    const index = this.props.attributions.findIndex(attribution => (attribution.index === updatedAttribution.index));
+    const index = this.props.attributions.findIndex(
+      attribution => attribution.index === updatedAttribution.index
+    );
     attributions[index] = updatedAttribution;
     this.props.onAttributionsChange(attributions);
   }
 
-  getAttributionsByType(type)
-  {
-    return this.props.attributions.filter(attribution => (attribution.type === type));
+  getAttributionsByType(type) {
+    return this.props.attributions.filter(
+      attribution => attribution.type === type
+    );
   }
 
-  render()
-  {
+  render() {
     let original = this.getAttributionsByType(AttributionType.Original).pop();
     let vide = this.getAttributionsByType(AttributionType.Vide).pop();
 
@@ -84,20 +77,31 @@ class AttributionsBuilder extends React.Component {
 
     return (
       <div className={s.attributions}>
-        <CitationPreview attributions={this.props.attributions} cladeName={this.props.cladeName} />
+        <CitationPreview
+          attributions={this.props.attributions}
+          cladeName={this.props.cladeName}
+        />
 
-        { original &&
-          <OriginalAttribution attribution={original} onDelete={this.delete} onChange={this.onAttributionChanged} />
-        }
+        {original && (
+          <OriginalAttribution
+            attribution={original}
+            onDelete={this.delete}
+            onChange={this.onAttributionChanged}
+          />
+        )}
 
-        { vide &&
-          <VideAttribution attribution={vide} onDelete={this.delete} onChange={this.onAttributionChanged} />
-        }
+        {vide && (
+          <VideAttribution
+            attribution={vide}
+            onDelete={this.delete}
+            onChange={this.onAttributionChanged}
+          />
+        )}
 
         {otherAttributions.map(attribution => {
           let AttributionComponent;
 
-          switch(attribution.type) {
+          switch (attribution.type) {
             case AttributionType.Emended:
               AttributionComponent = EmendedAttribution;
               break;
@@ -114,19 +118,28 @@ class AttributionsBuilder extends React.Component {
               AttributionComponent = Attribution;
           }
 
-          return <AttributionComponent
-            key={attribution.index}
-            attribution={attribution}
-            onDelete={this.delete}
-            onChange={this.onAttributionChanged}
-          />
+          return (
+            <AttributionComponent
+              key={attribution.index}
+              attribution={attribution}
+              onDelete={this.delete}
+              onChange={this.onAttributionChanged}
+            />
+          );
         })}
 
         <Dropdown id="addbutton">
-          <Dropdown.Toggle bsStyle="success"><Glyphicon glyph="plus" /> Add Attribution</Dropdown.Toggle>
+          <Dropdown.Toggle variant="success">
+            <Glyphicon glyph="plus" /> Add Attribution
+          </Dropdown.Toggle>
           <Dropdown.Menu>
             {menuTypes.map(type => (
-              <MenuItem id={type} eventKey={type} key={type} onSelect={() => this.addAttribution(type)}>
+              <MenuItem
+                id={type}
+                eventKey={type}
+                key={type}
+                onSelect={() => this.addAttribution(type)}
+              >
                 {AttributionType[type]}
               </MenuItem>
             ))}
@@ -136,5 +149,3 @@ class AttributionsBuilder extends React.Component {
     );
   }
 }
-
-export default withStyles(s)(AttributionsBuilder);

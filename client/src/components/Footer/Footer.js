@@ -1,16 +1,14 @@
-import React from 'react';
-import withStyles from 'isomorphic-style-loader/withStyles';
-import s from './Footer.css';
+import React from "react";
+import s from "./Footer.scss";
 
-class Footer extends React.Component {
-  render() {
-    const date = new Date();
-    return (
-      <div className={s.root}>
-        <span className={s.text}>©{date.getFullYear()} <a href="//phylogenyexplorerproject.com/">Phylogeny Explorer Project</a></span>
-      </div>
-    );
-  }
+export default function Footer() {
+  const date = new Date();
+  return (
+    <div className={s.root}>
+      <span className={s.text}>
+        &copy; {date.getFullYear()}{" "}
+        <a href="//phylogenyexplorerproject.com/">Phylogeny Explorer Project</a>
+      </span>
+    </div>
+  );
 }
-
-export default withStyles(s)(Footer);

@@ -1,12 +1,11 @@
-import fetch from './fetch';
-import { adminApiHost, publicApiHost } from '../config';
-import Auth from '../components/Auth';
+import "isomorphic-fetch";
+import { adminApiHost, publicApiHost } from "@src/config";
+import Auth from "@src/components/Auth";
 
-class Request {
-
+export default class Request {
   static endPoints = {
     admin: adminApiHost,
-    public: publicApiHost,
+    public: publicApiHost
   };
 
   constructor(url, method, params, endPoint) {
@@ -22,24 +21,30 @@ class Request {
 
     let isMultipart = false;
 
-    Object.keys(this._params).forEach((k) => (isMultipart = (this._params[k] instanceof File)));
+    Object.keys(this._params).forEach(
+      k => (isMultipart = this._params[k] instanceof File)
+    );
 
     if (isMultipart) {
       this._payload = new FormData();
-      Object.keys(this._params).forEach((k) => this._payload.append(k, this._params[k]));
+      Object.keys(this._params).forEach(k =>
+        this._payload.append(k, this._params[k])
+      );
       this._config.headers = {};
-    } else if (Object.keys(this._params).length !== 0 &&
-      JSON.stringify(this._params) !== JSON.stringify({})) {
+    } else if (
+      Object.keys(this._params).length !== 0 &&
+      JSON.stringify(this._params) !== JSON.stringify({})
+    ) {
       this._payload = JSON.stringify(this._params);
       this._config.headers = {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json"
       };
     } else {
       this._payload = JSON.stringify({});
       this._config.headers = {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
+        Accept: "application/json",
+        "Content-Type": "application/json"
       };
     }
 
@@ -49,26 +54,18 @@ class Request {
 
     this._config.method = this._method;
     this._config.body = this._payload;
-    if (this._config.method === 'GET') {
+    if (this._config.method === "GET") {
       delete this._config.body;
     }
   }
 
   localUrl(url) {
-    if (url.startsWith('http')) {
-      return url;
-    }
-
-    return `//${this._endPoint}${url}`;
+    return new URL(url, this._endpoint || publicApiHost).toString();
   }
-
 
   async fetch() {
-    const response = await fetch(this._url, this._config)
-      .then(resp => resp.json())
-      .then(data => data);
-    return response;
+    const response = await fetch(this._url, this._config);
+    const json = await response.json();
+    return json;
   }
 }
-
-export default Request;
